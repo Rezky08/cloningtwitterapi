@@ -11,8 +11,8 @@ const RESPONSE_GROUP = {
   400: [RESPONSE_CODE.RC_INVALID_DATA],
 };
 
-const getResponseGroup = (code) => {
-  for (const httpStatus in Object.keys(RESPONSE_GROUP)) {
+const getResponseGroup = (code = RESPONSE_CODE.RC_SUCCESS) => {
+  for (const httpStatus in RESPONSE_GROUP) {
     if (RESPONSE_GROUP[httpStatus].indexOf(code) > -1) {
       return httpStatus;
     }

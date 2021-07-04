@@ -1,18 +1,16 @@
 const PREFIX = "/user";
 
 const express = require("express");
-const ResponseFormatter = require("../responses/responseFormatter");
+const Response = require("../responses");
 
 const router = express.Router();
 
 router.get("/", (req, res) => {
-  res.json(
-    ResponseFormatter.successResponse({
-      user: {
-        name: "test",
-      },
-    })
-  );
+  Response.ResponseFormatter.jsonResponse(res, {
+    user: {
+      name: "bambang",
+    },
+  });
 });
 
 module.exports = {

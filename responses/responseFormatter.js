@@ -1,19 +1,15 @@
 const ResponseCode = require("./responseCode");
 
-const successResponse = (
+const jsonResponse = (
+  res,
   data,
   code = ResponseCode.RESPONSE_CODE.RC_SUCCESS
 ) => {
-  return {
-    ...ResponseCode.getCodeMessage(code),
-    data: data,
-  };
+  let httpStatus = ResponseCode.getResponseGroup(code);
+  res.status(httpStatus).json(formatResponse(data, code));
 };
-const errorResponse = (
-  data,
-  code = ResponseCode.RESPONSE_CODE.RC_INVALID_DATA,
-  message
-) => {
+
+const formatResponse = (data, code = ResponseCode.RESPONSE_CODE.RC_SUCCESS) => {
   return {
     ...ResponseCode.getCodeMessage(code),
     data: data,
@@ -21,6 +17,6 @@ const errorResponse = (
 };
 
 module.exports = {
-  errorResponse,
-  successResponse,
+  jsonResponse,
+  formatResponse,
 };
