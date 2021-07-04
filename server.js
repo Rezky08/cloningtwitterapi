@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const database = require("./config/database");
+const middlewares = require("./middlewares");
 require("dotenv/config");
 
 const app = express();
@@ -18,6 +19,7 @@ mongoose.connect(
 );
 
 // middleware
+app.use(middlewares.logger);
 
 // routes
 const UserRouter = require("./routes/userRoute");

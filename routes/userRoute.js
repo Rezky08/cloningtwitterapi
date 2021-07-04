@@ -14,6 +14,7 @@ router.get("/", (req, res) => {
     })
   );
 });
+
 module.exports = {
   prefix: PREFIX,
   router: router,
