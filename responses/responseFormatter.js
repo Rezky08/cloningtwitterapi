@@ -5,13 +5,13 @@ const jsonResponse = (
   data,
   code = ResponseCode.RESPONSE_CODE.RC_SUCCESS
 ) => {
-  let httpStatus = ResponseCode.getResponseGroup(code);
-  res.status(httpStatus).json(formatResponse(data, code));
+  let codeDetail = ResponseCode.getCodeDetail(code);
+  res.status(codeDetail.status).json(formatResponse(data, codeDetail));
 };
 
-const formatResponse = (data, code = ResponseCode.RESPONSE_CODE.RC_SUCCESS) => {
+const formatResponse = (data, codeDetail) => {
   return {
-    ...ResponseCode.getCodeMessage(code),
+    ...codeDetail,
     data: data,
   };
 };

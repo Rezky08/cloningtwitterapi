@@ -7,6 +7,7 @@ require("dotenv/config");
 const app = express();
 
 const PORT = process.env.APP_PORT || 5000;
+console.log(database.DB_CONNECTION);
 
 mongoose.Promise = global.Promise;
 mongoose.connect(
@@ -24,6 +25,9 @@ app.use(middlewares.logger);
 // routes
 const UserRouter = require("./routes/userRoute");
 
+app.get("/test", (req, res) => {
+  res.json("test");
+});
 app.use(UserRouter.prefix, UserRouter.router);
 
 // 404 exception
