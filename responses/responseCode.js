@@ -24,7 +24,7 @@ const availableCodes = [
 ];
 
 const getCodeDetail = (code) => {
-  return availableCodes.find((o) => (o.code = code));
+  return availableCodes.find((o) => o.code == code);
 };
 
 module.exports = {

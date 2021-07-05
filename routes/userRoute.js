@@ -1,21 +1,31 @@
 const PREFIX = "/user";
 
 const express = require("express");
-const Response = require("../responses");
 
 const router = express.Router();
 
-const User = require("../models/User");
+const UserController = require("../controllers/userController");
 
-router.get("/", (req, res) => {
-  User.find()
-    .then((users) => {
-      Response.ResponseFormatter.jsonResponse(res, users);
-    })
-    .catch((err) => {
-      Response.ResponseFormatter.jsonResponse(res, err);
-    });
-});
+/**
+ * method   : GET
+ * endpoint : "/user"
+ * return   : users[]
+ * */
+router.get("/", UserController.index);
+
+/**
+ * method   : GET
+ * endpoint : "/user/:userId"
+ * return   : user{}
+ * */
+router.get("/:userId", UserController.show);
+
+/**
+ * method   : PUT
+ * endpoint : "/user/:userId"
+ * return   : user{}
+ * */
+router.put("/:userId", UserController.update);
 
 module.exports = {
   prefix: PREFIX,
