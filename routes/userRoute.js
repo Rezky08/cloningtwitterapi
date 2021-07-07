@@ -21,11 +21,25 @@ router.get("/", UserController.index);
 router.get("/:userId", UserController.show);
 
 /**
+ * method   : POST
+ * endpoint : "/user"
+ * return   : user{}
+ * */
+router.post("/", UserController.store);
+
+/**
  * method   : PUT
  * endpoint : "/user/:userId"
  * return   : user{}
  * */
 router.put("/:userId", UserController.update);
+
+/**
+ * method   : PUT
+ * endpoint : "/user/:userId"
+ * return   : user{}
+ * */
+router.delete("/:userId", UserController.destroy);
 
 module.exports = {
   prefix: PREFIX,

@@ -10,6 +10,16 @@ const jsonResponse = (
   res.status(codeDetail.status).json(formatResponse(codeDetail, data));
 };
 
+const invalidValidationResponse = (error, res) => {
+  let code = ResponseCode.RESPONSE_CODE.RC_INVALID_DATA;
+  let codeDetail = ResponseCode.getCodeDetail(code);
+  res
+    .status(codeDetail.status)
+    .json(
+      formatErrorWithMessageResponse(codeDetail, error.message, error.errors)
+    );
+};
+
 const errorResponse = (
   error = new Error(),
   res,
@@ -26,6 +36,13 @@ const errorResponse = (
   }
 };
 
+const formatErrorWithMessageResponse = (codeDetail, message, data = {}) => {
+  return {
+    ...codeDetail,
+    message: message,
+    data: data,
+  };
+};
 const formatErrorResponse = (error = new Error(), codeDetail, data = {}) => {
   return {
     ...codeDetail,
@@ -44,4 +61,5 @@ module.exports = {
   jsonResponse,
   formatResponse,
   errorResponse,
+  invalidValidationResponse,
 };

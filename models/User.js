@@ -19,9 +19,20 @@ const UserSchema = mongoose.Schema({
   },
 });
 
-// UserSchema.pre("save", function (next) {
-//   console.log(this);
-//   next();
-// });
+/**
+ * Validate username is unique
+ */
+UserSchema.path("username").validate(async (username) => {
+  let documentCount = await mongoose.model("User").countDocuments({ username });
+  return !(documentCount > 0);
+}, "Username {VALUE} already exists");
+
+/**
+ * Encrypt password if value was changed or created
+ */
+UserSchema.pre("save", (done) => {
+  if (this.isModified("password")) {
+  }
+});
 
 module.exports = mongoose.model("User", UserSchema);

@@ -1,13 +1,6 @@
 const Response = require("../responses");
 const User = require("../models/User");
 
-const fillable = (req) => {
-  return {
-    username: req.body.username,
-    password: req.body.password,
-  };
-};
-
 const index = (req, res) => {
   User.find()
     .then((users) => {
@@ -43,9 +36,51 @@ const show = (req, res) => {
     });
 };
 
+const store = (req, res, next) => {
+  try {
+    const user = new User(req.body);
+    user
+      .save()
+      .then((data) => {
+        Response.ResponseFormatter.jsonResponse(
+          res,
+          Response.ResponseCode.RESPONSE_CODE.RC_SUCCESS,
+          data
+        );
+      })
+      .catch((err) => {
+        Response.ResponseFormatter.invalidValidationResponse(err, res);
+      });
+  } catch (error) {
+    next({
+      error: error,
+      code: Response.ResponseCode.RESPONSE_CODE.RC_INVALID_DATA,
+      data: req.body,
+    });
+  }
+};
+
 const update = (req, res, next) => {
   try {
-    User.findByIdAndUpdate(req.params.userId, fillable(req)).then((user) => {
+    User.findByIdAndUpdate(req.params.userId, req.body).then((user) => {
+      Response.ResponseFormatter.jsonResponse(
+        res,
+        Response.ResponseCode.RESPONSE_CODE.RC_SUCCESS,
+        user
+      );
+    });
+  } catch (error) {
+    next({
+      error: error,
+      code: Response.ResponseCode.RESPONSE_CODE.RC_INVALID_DATA,
+      data: req.body,
+    });
+  }
+};
+
+const destroy = (req, res, next) => {
+  try {
+    User.findByIdAndRemove(req.params.userId).then((user) => {
       Response.ResponseFormatter.jsonResponse(
         res,
         Response.ResponseCode.RESPONSE_CODE.RC_SUCCESS,
@@ -63,5 +98,7 @@ const update = (req, res, next) => {
 module.exports = {
   index,
   show,
+  store,
   update,
+  destroy,
 };
