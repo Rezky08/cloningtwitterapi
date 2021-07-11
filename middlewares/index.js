@@ -1,3 +1,4 @@
 const logger = require("./logger");
+const requireAuth = require("./requireAuth");
 
-module.exports = { logger };
+module.exports = { logger, requireAuth };

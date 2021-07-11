@@ -1,11 +1,16 @@
 const RESPONSE_CODE = {
   RC_SUCCESS: "0000",
   RC_INVALID_DATA: "1000",
+  // Auth
+  RC_UNAUTHENTICATED: "2001",
+  RC_UNAUTHORIZED: "2002",
 };
 
 const HTTP_RESPONSE = {
-  BAD_REQUEST: 400,
   SUCCESS: 200,
+  UNAUTHORIZED: 401,
+  BAD_REQUEST: 400,
+  SERVER_ERROR: 500,
 };
 
 const availableCodes = [
@@ -21,6 +26,17 @@ const availableCodes = [
     code: RESPONSE_CODE.RC_INVALID_DATA,
     message: "RC_INVALID_DATA",
   },
+  // error auth
+  {
+    status: HTTP_RESPONSE.UNAUTHORIZED,
+    code: RESPONSE_CODE.RC_UNAUTHENTICATED,
+    message: "RC_UNAUTHENTICATED",
+  },
+  {
+    status: HTTP_RESPONSE.UNAUTHORIZED,
+    code: RESPONSE_CODE.RC_UNAUTHORIZED,
+    message: "RC_UNAUTHORIZED",
+  },
 ];
 
 const getCodeDetail = (code) => {
@@ -28,6 +44,7 @@ const getCodeDetail = (code) => {
 };
 
 module.exports = {
+  HTTP_RESPONSE,
   RESPONSE_CODE,
   availableCodes,
   getCodeDetail,

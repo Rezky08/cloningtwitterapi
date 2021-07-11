@@ -31,12 +31,17 @@ const errorResponse = (
   data
 ) => {
   let codeDetail = ResponseCode.getCodeDetail(code);
-  if (process.env.APP_ENV === "dev" || process.env.APP_ENV === "staging") {
+  if (
+    (process.env.APP_ENV === "dev" || process.env.APP_ENV === "staging") &&
+    codeDetail
+  ) {
     res
-      .status(codeDetail.status)
+      .status(codeDetail.status ?? ResponseCode.HTTP_RESPONSE.SERVER_ERROR)
       .json(formatErrorResponse(error, codeDetail, data));
   } else {
-    res.status(500).json(formatResponse(codeDetail, "SERVER ERROR"));
+    res
+      .status(ResponseCode.HTTP_RESPONSE.SERVER_ERROR)
+      .json(formatResponse(codeDetail, "SERVER ERROR"));
   }
 };
 
