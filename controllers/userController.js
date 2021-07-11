@@ -60,15 +60,26 @@ const store = (req, res, next) => {
   }
 };
 
-const update = (req, res, next) => {
+const update = async (req, res, next) => {
   try {
-    User.findByIdAndUpdate(req.params.userId, req.body).then((user) => {
-      Response.ResponseFormatter.jsonResponse(
-        res,
-        Response.ResponseCode.RESPONSE_CODE.RC_SUCCESS,
-        user
-      );
+    const findUser = await User.findOne({ _id: req.params?.userId });
+
+    Object.keys(req.body).forEach((k) => {
+      findUser[k] = req.body[k];
     });
+
+    findUser
+      .save()
+      .then((user) => {
+        Response.ResponseFormatter.jsonResponse(
+          res,
+          Response.ResponseCode.RESPONSE_CODE.RC_SUCCESS,
+          user
+        );
+      })
+      .catch((err) => {
+        Response.ResponseFormatter.invalidValidationResponse(err, res);
+      });
   } catch (error) {
     next({
       error: error,

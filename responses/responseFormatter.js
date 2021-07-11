@@ -16,7 +16,11 @@ const invalidValidationResponse = (error, res) => {
   res
     .status(codeDetail.status)
     .json(
-      formatErrorWithMessageResponse(codeDetail, error.message, error.errors)
+      formatErrorWithMessageResponse(
+        codeDetail,
+        error.message,
+        error.errors ?? error.keyValue ?? null
+      )
     );
 };
 

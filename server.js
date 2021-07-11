@@ -23,6 +23,10 @@ mongoose
     process.exit();
   });
 
+mongoose.set("useNewUrlParser", true);
+mongoose.set("useFindAndModify", false);
+mongoose.set("useCreateIndex", true);
+
 // middleware
 app.use(
   express.urlencoded({
