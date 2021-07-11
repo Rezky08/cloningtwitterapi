@@ -36,33 +36,16 @@ const show = (req, res) => {
     });
 };
 
-const store = (req, res, next) => {
-  try {
-    const user = new User(req.body);
-    user
-      .save()
-      .then((data) => {
-        Response.ResponseFormatter.jsonResponse(
-          res,
-          Response.ResponseCode.RESPONSE_CODE.RC_SUCCESS,
-          data
-        );
-      })
-      .catch((err) => {
-        Response.ResponseFormatter.invalidValidationResponse(err, res);
-      });
-  } catch (error) {
-    next({
-      error: error,
-      code: Response.ResponseCode.RESPONSE_CODE.RC_INVALID_DATA,
-      data: req.body,
-    });
-  }
-};
-
 const update = async (req, res, next) => {
   try {
-    const findUser = await User.findOne({ _id: req.params?.userId });
+    const userId = req.params?.userId ?? req.user._id ?? null;
+    if (!userId) {
+      throw new Error("Require Credentials");
+    }
+
+    const findUser = await User.findOne({
+      _id: req.params?.userId ?? req.user._id ?? null,
+    });
 
     Object.keys(req.body).forEach((k) => {
       findUser[k] = req.body[k];
@@ -109,7 +92,6 @@ const destroy = (req, res, next) => {
 module.exports = {
   index,
   show,
-  store,
   update,
   destroy,
 };

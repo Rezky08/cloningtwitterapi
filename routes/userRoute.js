@@ -21,18 +21,18 @@ router.get("/", UserController.index);
 router.get("/:userId", UserController.show);
 
 /**
- * method   : POST
- * endpoint : "/user"
+ * method   : PUT
+ * endpoint : "/user/:userId"
  * return   : user{}
  * */
-router.post("/", UserController.store);
+router.put("/:userId", UserController.update);
 
 /**
  * method   : PUT
  * endpoint : "/user/:userId"
  * return   : user{}
  * */
-router.put("/:userId", UserController.update);
+router.put("/", UserController.update);
 
 /**
  * method   : PUT

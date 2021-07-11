@@ -6,6 +6,12 @@ const bcrypt = require("bcrypt");
 const moment = require("moment");
 moment.locale("id");
 
+const throwCredentials = (status) => {
+  if (status) {
+    throw new Error("Please check your credentials");
+  }
+};
+
 const getToken = (req) => {
   if (
     req.headers.authorization &&
@@ -37,14 +43,13 @@ const me = async (req, res, next) => {
 const login = async (req, res, next) => {
   try {
     const user = await User.findOne({ username: req.body.username });
-
-    if (!user) {
-      throw new Error("Please check your credentials");
-    }
+    throwCredentials(!user);
 
     bcrypt
       .compare(req.body.password, user.password)
-      .then(() => {
+      .then((value) => {
+        throwCredentials(!value);
+
         const token = jwt.sign(
           {
             _id: user._id,
@@ -59,16 +64,40 @@ const login = async (req, res, next) => {
         Response.ResponseFormatter.jsonResponse(res, undefined, { token });
       })
       .catch((err) => {
-        Response.ResponseFormatter.jsonResponse(
-          res,
-          Response.ResponseCode.RESPONSE_CODE.RC_SUCCESS,
-          err
-        );
+        next({
+          error: err,
+          code: Response.ResponseCode.RESPONSE_CODE.RC_UNAUTHENTICATED,
+          data: req.body,
+        });
       });
   } catch (error) {
     next({
       error: error,
       code: Response.ResponseCode.RESPONSE_CODE.RC_UNAUTHENTICATED,
+      data: req.body,
+    });
+  }
+};
+
+const register = (req, res, next) => {
+  try {
+    const user = new User(req.body);
+    user
+      .save()
+      .then((data) => {
+        Response.ResponseFormatter.jsonResponse(
+          res,
+          Response.ResponseCode.RESPONSE_CODE.RC_SUCCESS,
+          data
+        );
+      })
+      .catch((err) => {
+        Response.ResponseFormatter.invalidValidationResponse(err, res);
+      });
+  } catch (error) {
+    next({
+      error: error,
+      code: Response.ResponseCode.RESPONSE_CODE.RC_INVALID_DATA,
       data: req.body,
     });
   }
@@ -86,6 +115,7 @@ const logout = async (req, res) => {
 
 module.exports = {
   login,
+  register,
   refresh,
   logout,
   me,

@@ -39,7 +39,7 @@ app.use(express.json());
 app.use(middlewares.logger);
 app.use(
   jwt({ secret: process.env.TOKEN_SECRET_KEY, algorithms: ["HS256"] }).unless({
-    path: ["/auth/login", "/auth/token"],
+    path: ["/auth/login", "/auth/register", "/auth/token"],
   })
 );
 
