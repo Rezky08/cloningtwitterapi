@@ -57,27 +57,7 @@ app.use(AuthRouter.prefix, AuthRouter.router);
 // 404 exception
 
 // error handler
-app.use(function (error, req, res, next) {
-  console.log(error);
-  let code =
-    Object.values(ResponseCode.RESPONSE_CODE).indexOf(error.code) > -1
-      ? error.code
-      : null;
-  let data = error.data;
-
-  if (!code) {
-    switch (error.status) {
-      case ResponseCode.HTTP_RESPONSE.UNAUTHORIZED:
-        code = ResponseCode.RESPONSE_CODE.RC_UNAUTHORIZED;
-        data = { message: error.message };
-        break;
-
-      default:
-        break;
-    }
-  }
-  ResponseFormatter.errorResponse(error.error, res, code, data);
-});
+app.use(middlewares.errorLogger);
 
 // app listener
 app.listen(PORT, () => console.log(`App started on port ${PORT}`));

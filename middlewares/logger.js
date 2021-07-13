@@ -5,6 +5,12 @@ const AccessLog = require("../models/AccessLog");
 const fs = require("fs");
 const path = require("path");
 const drivers = process.env.LOG_DRIVER.split(",");
+const accessLogStream = fs.createWriteStream(
+  path.join(process.env.LOG_PATH, "access.log"),
+  {
+    flags: "a",
+  }
+);
 
 const logger = (req, res, next) => {
   const useragent = req.headers["user-agent"];
@@ -41,12 +47,6 @@ const logger = (req, res, next) => {
   }
 
   if (drivers.includes("file")) {
-    const accessLogStream = fs.createWriteStream(
-      path.join(process.env.LOG_PATH, "access.log"),
-      {
-        flags: "a",
-      }
-    );
     accessLogStream.write(logMessage + "\n");
   }
 
