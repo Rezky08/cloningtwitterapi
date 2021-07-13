@@ -42,6 +42,7 @@ app.use(
     path: ["/auth/login", "/auth/register", "/auth/token"],
   })
 );
+app.use(middlewares.userAccessLogger);
 
 // routes
 const UserRouter = require("./routes/userRoute");
@@ -57,6 +58,7 @@ app.use(AuthRouter.prefix, AuthRouter.router);
 
 // error handler
 app.use(function (error, req, res, next) {
+  console.log(error);
   let code =
     Object.values(ResponseCode.RESPONSE_CODE).indexOf(error.code) > -1
       ? error.code
