@@ -4,7 +4,6 @@ const jwt = require("express-jwt");
 const mongoose = require("mongoose");
 const database = require("./config/database");
 const middlewares = require("./middlewares");
-const { ResponseFormatter, ResponseCode } = require("./responses");
 require("dotenv/config");
 
 const app = express();
