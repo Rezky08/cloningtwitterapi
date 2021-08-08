@@ -2,4 +2,5 @@ node_modules
 .env
 routes/*
 !routes/userRoute.js
+!routes/authRoute.js
 package-lock.json
