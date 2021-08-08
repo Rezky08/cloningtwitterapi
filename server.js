@@ -46,12 +46,14 @@ app.use(middlewares.userAccessLogger);
 // routes
 const UserRouter = require("./routes/userRoute");
 const AuthRouter = require("./routes/authRoute");
+const TweetRouter = require("./routes/tweetRoute");
 
 app.get("/test", (req, res) => {
   res.json("test");
 });
 app.use(UserRouter.prefix, UserRouter.router);
 app.use(AuthRouter.prefix, AuthRouter.router);
+app.use(TweetRouter.prefix, TweetRouter.router);
 
 // 404 exception
 
