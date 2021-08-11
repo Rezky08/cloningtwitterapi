@@ -63,4 +63,8 @@ app.use(TweetRouter.prefix, TweetRouter.router);
 app.use(middlewares.errorLogger);
 
 // app listener
-app.listen(PORT, () => console.log(`App started on port ${PORT}`));
+if (process.env.APP_ENV == "dev") {
+  app.listen(PORT, () => console.log(`App started on port ${PORT}`));
+} else {
+  app.listen(() => console.log(`App started`));
+}
