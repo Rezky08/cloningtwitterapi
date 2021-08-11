@@ -1,5 +1,6 @@
 const express = require("express");
 const jwt = require("express-jwt");
+const cors = require("cors");
 
 const mongoose = require("mongoose");
 const database = require("./config/database");
@@ -7,9 +8,10 @@ const middlewares = require("./middlewares");
 require("dotenv/config");
 
 const app = express();
+app.use(cors());
 
 const PORT = process.env.APP_PORT || 5000;
-
+console.log(database.DB_CONNECTION);
 mongoose.Promise = global.Promise;
 mongoose
   .connect(database.DB_CONNECTION, {

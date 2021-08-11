@@ -3,6 +3,9 @@ const Tweet = require("../models/Tweet");
 
 const index = (req, res) => {
   Tweet.find()
+    .select("-__v")
+    .populate({ path: "user", select: "username _id" })
+    .exec()
     .then((tweets) => {
       Response.ResponseFormatter.jsonResponse(
         res,

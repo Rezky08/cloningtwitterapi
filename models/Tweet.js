@@ -6,13 +6,13 @@ const TweetSchema = mongoose.Schema({
     ref: "User",
     required: true,
   },
-  tweet: {
+  text: {
     type: String,
     required: true,
   },
-  visibility: {
+  replyPermission: {
     type: String,
-    enum: ["public", "private"],
+    enum: ["Everyone", "People you follow", "People you mention"],
     required: true,
   },
   attachments: {
