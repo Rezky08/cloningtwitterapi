@@ -10,7 +10,7 @@ require("dotenv/config");
 const app = express();
 app.use(cors());
 
-const PORT = process.env.APP_PORT || 5000;
+const PORT = process.env.PORT || process.env.APP_PORT || 5000;
 console.log(database.DB_CONNECTION);
 mongoose.Promise = global.Promise;
 mongoose
@@ -63,8 +63,4 @@ app.use(TweetRouter.prefix, TweetRouter.router);
 app.use(middlewares.errorLogger);
 
 // app listener
-if (process.env.APP_ENV == "dev") {
-  app.listen(PORT, () => console.log(`App started on port ${PORT}`));
-} else {
-  app.listen(() => console.log(`App started`));
-}
+app.listen(PORT, () => console.log(`App started on port ${PORT}`));
