@@ -42,7 +42,9 @@ const me = async (req, res, next) => {
 
 const login = async (req, res, next) => {
   try {
-    const user = await User.findOne({ username: req.body.username });
+    const user = await User.findOne({ username: req.body.username }).select(
+      "+password"
+    );
     throwCredentials(!user);
 
     bcrypt

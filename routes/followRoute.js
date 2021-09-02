@@ -15,24 +15,24 @@ router.get("/", FollowController.index);
 
 /**
  * method   : GET
- * endpoint : "/follow/:userId"
+ * endpoint : "/follow/:username"
  * return   : follow{}
  * */
-router.get("/:userId", FollowController.show);
+router.get("/:username", FollowController.show);
 
 /**
  * method   : POST
- * endpoint : "/follow/:userId"
+ * endpoint : "/follow/:username"
  * return   : follow{}
  * */
-router.post("/:userId", FollowController.store);
+router.post("/:username", FollowController.store);
 
 /**
  * method   : DELETE
- * endpoint : "/follow/:userId"
+ * endpoint : "/follow/:username"
  * return   : follow{}
  * */
-router.delete("/:userId", FollowController.destroy);
+router.delete("/:username", FollowController.destroy);
 
 module.exports = {
   prefix: PREFIX,
