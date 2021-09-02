@@ -4,6 +4,7 @@ const cors = require("cors");
 
 const mongoose = require("mongoose");
 const database = require("./config/database");
+const jwtToken = require("./config/jwt");
 const middlewares = require("./middlewares");
 require("dotenv/config");
 
@@ -11,7 +12,7 @@ const app = express();
 app.use(cors());
 
 const PORT = process.env.PORT || process.env.APP_PORT || 5000;
-console.log(database.DB_CONNECTION);
+console.log("Starting Connect to :", database.DB_CONNECTION);
 mongoose.Promise = global.Promise;
 mongoose
   .connect(database.DB_CONNECTION, {
@@ -49,13 +50,12 @@ app.use(middlewares.userAccessLogger);
 const UserRouter = require("./routes/userRoute");
 const AuthRouter = require("./routes/authRoute");
 const TweetRouter = require("./routes/tweetRoute");
+const FollowRouter = require("./routes/followRoute");
 
-app.get("/test", (req, res) => {
-  res.json("test");
-});
 app.use(UserRouter.prefix, UserRouter.router);
 app.use(AuthRouter.prefix, AuthRouter.router);
 app.use(TweetRouter.prefix, TweetRouter.router);
+app.use(FollowRouter.prefix, FollowRouter.router);
 
 // 404 exception
 
