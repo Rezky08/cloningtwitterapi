@@ -1,0 +1,14 @@
+_id: env_72c7047ef860402a8777fc954de9bf81
+type: Environment
+parentId: env_24c5e2b71e7109f51c89cf02f85b1dd52612c836
+modified: 1628723698298
+created: 1628721612869
+name: heroku
+data:
+  baseUrl: https://cloningtwitterapi.herokuapp.com
+dataPropertyOrder:
+  "&":
+    - baseUrl
+color: null
+isPrivate: false
+metaSortKey: 1628721612869

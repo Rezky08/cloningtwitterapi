@@ -1,0 +1,32 @@
+_id: req_5d7b65042950446bbc9750dabb7adde6
+type: Request
+parentId: fld_18ebac63b385411891481bc38212ef20
+modified: 1625981983756
+created: 1625444547486
+url: "{{ _.baseUrl }}/user"
+name: update user
+description: ""
+method: PUT
+body:
+  mimeType: application/json
+  text: |
+    {
+    	"password" : "passwordb"
+    }
+parameters: []
+headers:
+  - name: Content-Type
+    value: application/json
+    id: pair_065f132babc64d279b450f7d972af2d0
+authentication:
+  type: bearer
+  token: "{% response 'body', 'req_1d2c32f0ac2a4c69b5c8daca4cc8d790',
+    'b64::JC5kYXRhLnRva2Vu::46b', 'never', 60 %}"
+metaSortKey: -1625391010193.375
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

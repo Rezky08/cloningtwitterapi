@@ -1,0 +1,32 @@
+_id: req_8ef71ab088614978ba60c6ac0033c656
+type: Request
+parentId: fld_3ef76e232f4e42dbae9ace7b57fb1979
+modified: 1625389963707
+created: 1625389931865
+url: "{{ _.baseUrl }}/posts/{% response 'body',
+  'req_d94eb42d0be6441998c36e14ed802b0c', 'b64::JC4wLl9pZA==::46b', 'never', 60
+  %}"
+name: update post
+description: ""
+method: PUT
+body:
+  mimeType: application/json
+  text: |-
+    {
+    	"title" : "updated Title",
+    	"description"  :"updated Description"
+    }
+parameters: []
+headers:
+  - name: Content-Type
+    value: application/json
+    id: pair_b2220888be33447bb7d2c32fdd397298
+authentication: {}
+metaSortKey: -1624854842177.375
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global
