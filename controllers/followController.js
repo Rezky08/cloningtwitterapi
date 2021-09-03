@@ -2,63 +2,63 @@ const Response = require("../responses");
 const User = require("../models/User");
 const Follow = require("../models/Follow");
 
-const index = (req, res) => {
-  User.find()
-    .then((users) => {
-      Response.ResponseFormatter.jsonResponse(
-        res,
-        Response.ResponseCode.RESPONSE_CODE.RC_SUCCESS,
-        users
-      );
-    })
-    .catch((err) => {
-      Response.ResponseFormatter.jsonResponse(
-        res,
-        Response.ResponseCode.RESPONSE_CODE.RC_SUCCESS,
-        err
-      );
-    });
-};
-const show = (req, res) => {
-  User.findById(req.params.userId)
-    .then((user) => {
-      Response.ResponseFormatter.jsonResponse(
-        res,
-        Response.ResponseCode.RESPONSE_CODE.RC_SUCCESS,
-        user
-      );
-    })
-    .catch((err) => {
-      Response.ResponseFormatter.jsonResponse(
-        res,
-        Response.ResponseCode.RESPONSE_CODE.RC_SUCCESS,
-        err
-      );
-    });
-};
-
 const store = async (req, res, next) => {
   try {
-    const username = req.params?.username ?? null;
-    followUser = await User.findOne({ username });
+    // find user by username
+    const userWantToFollow = await User.findOne({
+      username: req.params?.username ?? null,
+    });
+    if (!userWantToFollow) {
+      throw new Error("Require user want to follow");
+    }
+    // find current user
+    const user = await User.findById(req.user._id);
 
-    if (!followUser) {
-      throw new Error("Cannot find this user");
+    if (!user) {
+      throw new Error("Require Credentials");
     }
 
-    following = new Follow({ user: req.user, userFollow: followUser });
-    following
+    // find current user follows
+    let followUser = await Follow.findOne({
+      user: user,
+    });
+
+    // if doesnt exist create one
+    if (!followUser) {
+      followUser = await new Follow({ user: user }).save();
+    }
+
+    // find follows of user want to follow
+    let followUserWantToFollow = await Follow.findOne({
+      user: userWantToFollow,
+    });
+
+    // if doesnt exist create one
+    if (!followUserWantToFollow) {
+      followUserWantToFollow = await new Follow({
+        user: userWantToFollow,
+      }).save();
+    }
+
+    // push to followings
+    followUser.followings.push({ user: userWantToFollow });
+    followUser
       .save()
       .then(() => {
-        Response.ResponseFormatter.jsonResponse(
-          res,
-          Response.ResponseCode.RESPONSE_CODE.RC_SUCCESS,
-          { message: `${followUser?.username} followed!` }
-        );
+        // push to followers
+        followUserWantToFollow.followers.push({ user: user });
+        followUserWantToFollow.save();
       })
-      .catch((err) => {
-        Response.ResponseFormatter.invalidValidationResponse(err, res);
-      });
+      .catch(() => {});
+
+    // send response
+    Response.ResponseFormatter.jsonResponse(
+      res,
+      Response.ResponseCode.RESPONSE_CODE.RC_SUCCESS,
+      {
+        message: "Success follow " + userWantToFollow.username,
+      }
+    );
   } catch (error) {
     next({
       error: error,
@@ -68,72 +68,68 @@ const store = async (req, res, next) => {
   }
 };
 
-const update = async (req, res, next) => {
+const destroy = async (req, res, next) => {
   try {
-    const userId = req.params?.userId ?? req.user._id ?? null;
-    if (!userId) {
+    // find user by username
+    const userWantToUnfollow = await User.findOne({
+      username: req.params?.username ?? null,
+    });
+    if (!userWantToUnfollow) {
+      throw new Error("Require user want to follow");
+    }
+    // find current user
+    const user = await User.findById(req.user._id);
+
+    if (!user) {
       throw new Error("Require Credentials");
     }
 
-    const findUser = await User.findOne({
-      _id: req.params?.userId ?? req.user._id ?? null,
+    // find current user follows
+    let followUser = await Follow.findOne({
+      user: user,
     });
 
-    Object.keys(req.body).forEach((k) => {
-      findUser[k] = req.body[k];
-    });
-
-    findUser
-      .save()
-      .then((user) => {
-        Response.ResponseFormatter.jsonResponse(
-          res,
-          Response.ResponseCode.RESPONSE_CODE.RC_SUCCESS,
-          user
-        );
-      })
-      .catch((err) => {
-        Response.ResponseFormatter.invalidValidationResponse(err, res);
-      });
-  } catch (error) {
-    next({
-      error: error,
-      code: Response.ResponseCode.RESPONSE_CODE.RC_INVALID_DATA,
-      data: req.body,
-    });
-  }
-};
-
-const destroy = async (req, res, next) => {
-  try {
-    const username = req.params?.username ?? null;
-    followUser = await User.findOne({ username });
-
+    // if doesnt exist create one
     if (!followUser) {
-      throw new Error("Cannot find this user");
+      followUser = await new Follow({ user: user }).save();
     }
 
-    following = await Follow.findOne({
-      user: req.user._id,
-      userFollow: followUser._id,
-    }).populate([
-      { path: "user", select: "username -_id" },
-      { path: "userFollow", select: "username -_id" },
-    ]);
+    // find follows of user want to follow
+    let followUserWantToUnfollow = await Follow.findOne({
+      user: userWantToUnfollow,
+    });
 
-    following
-      .delete()
-      .then(() => {
-        Response.ResponseFormatter.jsonResponse(
-          res,
-          Response.ResponseCode.RESPONSE_CODE.RC_SUCCESS,
-          following
-        );
-      })
-      .catch((err) => {
-        Response.ResponseFormatter.invalidValidationResponse(err, res);
-      });
+    // if doesnt exist create one
+    if (!followUserWantToUnfollow) {
+      followUserWantToUnfollow = await new Follow({
+        user: userWantToUnfollow,
+      }).save();
+    }
+
+    // filter to followings
+    followUser.followings = followUser.followings.filter(
+      (following) => following.user == userWantToUnfollow._id
+    );
+    await followUser.save();
+    console.log("Masuk");
+
+    followUserWantToUnfollow.followers =
+      followUserWantToUnfollow.followers.filter(
+        (follower) => follower.user == user._id
+      );
+
+    await followUserWantToUnfollow.save();
+
+    // send response
+    Response.ResponseFormatter.jsonResponse(
+      res,
+      Response.ResponseCode.RESPONSE_CODE.RC_SUCCESS,
+      {
+        message: "Success unfollow " + userWantToUnfollow.username,
+      }
+    );
   } catch (error) {
+    console.log(error);
     next({
       error: error,
       code: Response.ResponseCode.RESPONSE_CODE.RC_INVALID_DATA,
@@ -142,9 +138,6 @@ const destroy = async (req, res, next) => {
   }
 };
 module.exports = {
-  index,
-  show,
-  update,
   store,
   destroy,
 };
