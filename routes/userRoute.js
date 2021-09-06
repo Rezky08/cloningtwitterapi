@@ -15,10 +15,10 @@ router.get("/", UserController.index);
 
 /**
  * method   : GET
- * endpoint : "/user/:userId"
+ * endpoint : "/user/:username"
  * return   : user{}
  * */
-router.get("/:userId", UserController.show);
+router.get("/:username", UserController.show);
 
 /**
  * method   : PUT

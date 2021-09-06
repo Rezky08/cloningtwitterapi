@@ -19,7 +19,66 @@ const index = (req, res) => {
     });
 };
 const show = (req, res) => {
-  User.findById(req.params.userId)
+  User.aggregate([
+    { $match: { username: req.params.username } },
+    {
+      $lookup: {
+        from: "follows",
+        localField: "_id",
+        foreignField: "user",
+        as: "follows",
+      },
+    },
+    {
+      $unwind: "$follows",
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "follows.followings.user",
+        foreignField: "_id",
+        as: "follows.followings.user",
+      },
+    },
+    {
+      $unwind: {
+        path: "$follows.followings.user",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $unwind: {
+        path: "$follows.followers.user",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $project: {
+        __v: false,
+        password: false,
+        created_at: false,
+        updated_at: false,
+        "follows.__v": false,
+        "follows.followings.__v": false,
+        "follows.followings.user.__v": false,
+        "follows.followings.user._id": false,
+        "follows.followers.__v": false,
+        "follows.followers.user.__v": false,
+        "follows.followers.user._id": false,
+        "follows._id": false,
+        "follows.followings.created_at": false,
+        "follows.followings.updated_at": false,
+        "follows.followings.user.created_at": false,
+        "follows.followings.user.updated_at": false,
+        "follows.followings.user.password": false,
+        "follows.followers.created_at": false,
+        "follows.followers.updated_at": false,
+        "follows.followers.user.created_at": false,
+        "follows.followers.user.updated_at": false,
+        "follows.followers.user.password": false,
+      },
+    },
+  ])
     .then((user) => {
       Response.ResponseFormatter.jsonResponse(
         res,
