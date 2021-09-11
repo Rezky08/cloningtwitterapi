@@ -4,6 +4,8 @@ const RESPONSE_CODE = {
   // Auth
   RC_UNAUTHENTICATED: "2001",
   RC_UNAUTHORIZED: "2002",
+  // Follows
+  RC_INVALID_FOLLOW: "3001",
 };
 
 const HTTP_RESPONSE = {
@@ -36,6 +38,12 @@ const availableCodes = [
     status: HTTP_RESPONSE.UNAUTHORIZED,
     code: RESPONSE_CODE.RC_UNAUTHORIZED,
     message: "RC_UNAUTHORIZED",
+  },
+  // error follows
+  {
+    status: HTTP_RESPONSE.BAD_REQUEST,
+    code: RESPONSE_CODE.RC_INVALID_FOLLOW,
+    message: "RC_INVALID_FOLLOW",
   },
 ];
 

@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const uniqueValidator = require("mongoose-unique-validator");
 const bcrypt = require("bcrypt");
 const Follow = require("./Follow");
+const UserDetail = require("./UserDetail");
 
 const UserSchema = mongoose.Schema({
   username: {
@@ -48,9 +49,14 @@ UserSchema.pre("save", async function (next) {
 });
 
 UserSchema.post("save", async function () {
-  let userFollow = await Follow.findOne(this._id);
+  console.log(this.isNew);
+  let userFollow = await Follow.findOne({ user: this._id });
+  let userDetail = await UserDetail.findOne({ user: this._id });
   if (!userFollow) {
     new Follow({ user: this }).save();
+  }
+  if (!userDetail) {
+    new UserDetail({ user: this }).save();
   }
 });
 module.exports = mongoose.model("User", UserSchema);

@@ -1,6 +1,7 @@
 const Response = require("../responses");
 const User = require("../models/User");
 const Follow = require("../models/Follow");
+const { errorResponse } = require("../responses/responseFormatter");
 
 const store = async (req, res, next) => {
   try {
@@ -15,7 +16,20 @@ const store = async (req, res, next) => {
     const user = await User.findById(req.user._id);
 
     if (!user) {
-      throw new Error("Require Credentials");
+      return errorResponse(
+        new Error("Require Credentials"),
+        res,
+        Response.ResponseCode.RESPONSE_CODE.RC_UNAUTHENTICATED
+      );
+    }
+
+    // abort if follow self
+    if (user.equals(userWantToFollow)) {
+      return errorResponse(
+        new Error("Cannot follow yourself"),
+        res,
+        Response.ResponseCode.RESPONSE_CODE.RC_INVALID_FOLLOW
+      );
     }
 
     // find current user follows
