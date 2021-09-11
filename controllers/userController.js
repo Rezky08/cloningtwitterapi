@@ -19,7 +19,7 @@ const index = (req, res) => {
     });
 };
 const show = (req, res) => {
-  User.aggregate([
+  const aggregateQuery = [
     { $match: { username: req.params.username } },
     {
       $lookup: {
@@ -30,60 +30,32 @@ const show = (req, res) => {
       },
     },
     {
-      $unwind: "$follows",
-    },
-    {
-      $lookup: {
-        from: "users",
-        localField: "follows.followings.user",
-        foreignField: "_id",
-        as: "follows.followings.user",
+      $addFields: {
+        following: "$follows.following",
+        followers: "$follows.followers",
       },
     },
     {
-      $unwind: {
-        path: "$follows.followings.user",
-        preserveNullAndEmptyArrays: true,
-      },
+      $unwind: "$following",
     },
     {
-      $unwind: {
-        path: "$follows.followers.user",
-        preserveNullAndEmptyArrays: true,
-      },
+      $unwind: "$followers",
     },
     {
       $project: {
-        __v: false,
-        password: false,
-        created_at: false,
-        updated_at: false,
-        "follows.__v": false,
-        "follows.followings.__v": false,
-        "follows.followings.user.__v": false,
-        "follows.followings.user._id": false,
-        "follows.followers.__v": false,
-        "follows.followers.user.__v": false,
-        "follows.followers.user._id": false,
-        "follows._id": false,
-        "follows.followings.created_at": false,
-        "follows.followings.updated_at": false,
-        "follows.followings.user.created_at": false,
-        "follows.followings.user.updated_at": false,
-        "follows.followings.user.password": false,
-        "follows.followers.created_at": false,
-        "follows.followers.updated_at": false,
-        "follows.followers.user.created_at": false,
-        "follows.followers.user.updated_at": false,
-        "follows.followers.user.password": false,
+        username: true,
+        followers: { $size: "$followers" },
+        following: { $size: "$following" },
       },
     },
-  ])
+    // { $limit: 1 },
+  ];
+  User.aggregate(aggregateQuery)
     .then((user) => {
       Response.ResponseFormatter.jsonResponse(
         res,
         Response.ResponseCode.RESPONSE_CODE.RC_SUCCESS,
-        user
+        user[0] ?? {}
       );
     })
     .catch((err) => {

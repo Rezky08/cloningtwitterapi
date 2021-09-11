@@ -40,8 +40,8 @@ const store = async (req, res, next) => {
       }).save();
     }
 
-    // push to followings
-    followUser.followings.push({ user: userWantToFollow });
+    // push to following
+    followUser.following.push({ user: userWantToFollow });
     followUser
       .save()
       .then(() => {
@@ -106,8 +106,8 @@ const destroy = async (req, res, next) => {
       }).save();
     }
 
-    // filter to followings
-    followUser.followings = followUser.followings.filter(
+    // filter to following
+    followUser.following = followUser.following.filter(
       (following) => following.user == userWantToUnfollow._id
     );
     await followUser.save();

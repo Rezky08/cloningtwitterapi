@@ -30,6 +30,10 @@ mongoose
 mongoose.set("useNewUrlParser", true);
 mongoose.set("useFindAndModify", false);
 mongoose.set("useCreateIndex", true);
+// mongoose.set("debug", function (collectionName, method, query, doc) {
+//   console.log(query);
+//   console.log(method);
+// });
 
 // middleware
 app.use(

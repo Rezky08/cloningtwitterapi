@@ -10,7 +10,7 @@ const FollowSchema = mongoose.Schema({
     unique: true,
   },
 
-  followings: [
+  following: [
     {
       user: {
         type: mongoose.Schema.Types.ObjectId,
