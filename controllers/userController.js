@@ -30,9 +30,20 @@ const show = (req, res) => {
       },
     },
     {
+      $lookup: {
+        from: "userdetails",
+        localField: "_id",
+        foreignField: "user",
+        as: "detail",
+      },
+    },
+    {
       $addFields: {
         following: "$follows.following",
         followers: "$follows.followers",
+        description: "$detail.description",
+        location: "$detail.location",
+        link: "$detail.link",
       },
     },
     {
@@ -42,10 +53,22 @@ const show = (req, res) => {
       $unwind: "$followers",
     },
     {
+      $unwind: "$description",
+    },
+    {
+      $unwind: "$location",
+    },
+    {
+      $unwind: "$link",
+    },
+    {
       $project: {
         username: true,
         followers: { $size: "$followers" },
         following: { $size: "$following" },
+        description: 1,
+        location: 1,
+        link: 1,
       },
     },
     // { $limit: 1 },

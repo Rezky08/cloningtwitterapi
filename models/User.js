@@ -49,7 +49,6 @@ UserSchema.pre("save", async function (next) {
 });
 
 UserSchema.post("save", async function () {
-  console.log(this.isNew);
   let userFollow = await Follow.findOne({ user: this._id });
   let userDetail = await UserDetail.findOne({ user: this._id });
   if (!userFollow) {
