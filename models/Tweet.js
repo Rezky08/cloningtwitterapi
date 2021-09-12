@@ -13,11 +13,12 @@ const TweetSchema = mongoose.Schema({
   replyPermission: {
     type: String,
     enum: ["Everyone", "People you follow", "People you mention"],
-    required: true,
+    default: "Everyone",
   },
   attachments: {
     type: [mongoose.Schema.Types.ObjectId],
     ref: "Attachment",
+    default: [],
   },
   created_at: {
     type: Date,

@@ -55,11 +55,13 @@ const UserRouter = require("./routes/userRoute");
 const AuthRouter = require("./routes/authRoute");
 const TweetRouter = require("./routes/tweetRoute");
 const FollowRouter = require("./routes/followRoute");
+const TimelineRouter = require("./routes/timelineRoute");
 
 app.use(UserRouter.prefix, UserRouter.router);
 app.use(AuthRouter.prefix, AuthRouter.router);
 app.use(TweetRouter.prefix, TweetRouter.router);
 app.use(FollowRouter.prefix, FollowRouter.router);
+app.use(TimelineRouter.prefix, TimelineRouter.router);
 
 // 404 exception
 
