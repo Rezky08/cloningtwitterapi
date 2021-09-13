@@ -20,6 +20,25 @@ const TweetSchema = mongoose.Schema({
     ref: "Attachment",
     default: [],
   },
+  retweet: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: "User",
+    default: [],
+  },
+  replyTo: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Tweet",
+  },
+  views: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: "User",
+    default: [],
+  },
+  likes: {
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: "User",
+    default: [],
+  },
   created_at: {
     type: Date,
     default: Date.now,

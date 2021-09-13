@@ -5,74 +5,98 @@ const User = require("../models/User");
 const { errorResponse } = require("../responses/responseFormatter");
 const ObjectId = mongoose.Types.ObjectId;
 
+const graphReplies = {
+  $graphLookup: {
+    from: "tweets",
+    startWith: "$_id",
+    connectFromField: "_id",
+    connectToField: "replyTo",
+    depthField: "depth",
+    as: "replies",
+  },
+};
+
+const timelineFilter = [
+  {
+    $lookup: {
+      from: "follows",
+      localField: "_id",
+      foreignField: "user",
+      as: "follows",
+    },
+  },
+  {
+    $addFields: {
+      following: "$follows.following.user",
+      tweets: "$tweets",
+    },
+  },
+  {
+    $unwind: "$following",
+  },
+  {
+    $lookup: {
+      from: "tweets",
+      let: { followinguser: { $concatArrays: ["$following", ["$_id"]] } },
+      pipeline: [
+        graphReplies,
+        {
+          $lookup: {
+            from: "users",
+            localField: "user",
+            foreignField: "_id",
+            as: "userTweet",
+          },
+        },
+
+        {
+          $unwind: "$userTweet",
+        },
+        {
+          $addFields: {
+            username: "$userTweet.username",
+          },
+        },
+        {
+          $match: { $expr: { $in: ["$user", "$$followinguser"] } },
+        },
+        {
+          $sort: {
+            created_at: -1,
+          },
+        },
+        {
+          $project: {
+            username: 1,
+            text: 1,
+            attachments: 1,
+            replyPermission: 1,
+            replies: 1,
+            replyTo: 1,
+            created_at: 1,
+          },
+        },
+      ],
+      as: "tweets",
+    },
+  },
+  {
+    $project: {
+      _id: 0,
+      tweets: 1,
+    },
+  },
+  {
+    $limit: 1,
+  },
+];
+
 const index = (req, res) => {
   User.aggregate([
     {
       $match: { _id: ObjectId(req?.user?._id) },
     },
-    {
-      $lookup: {
-        from: "follows",
-        localField: "_id",
-        foreignField: "user",
-        as: "follows",
-      },
-    },
-    {
-      $addFields: {
-        following: "$follows.following.user",
-        tweets: "$tweets",
-      },
-    },
-    {
-      $unwind: "$following",
-    },
-    {
-      $lookup: {
-        from: "tweets",
-        let: { followinguser: { $concatArrays: ["$following", ["$_id"]] } },
-        pipeline: [
-          {
-            $lookup: {
-              from: "users",
-              localField: "user",
-              foreignField: "_id",
-              as: "userTweet",
-            },
-          },
-          {
-            $unwind: "$userTweet",
-          },
-          {
-            $addFields: {
-              username: "$userTweet.username",
-            },
-          },
-          {
-            $match: { $expr: { $in: ["$user", "$$followinguser"] } },
-          },
-          {
-            $project: {
-              username: 1,
-              text: 1,
-              attachments: 1,
-              replyPermission: 1,
-              created_at: 1,
-            },
-          },
-        ],
-        as: "tweets",
-      },
-    },
-    {
-      $project: {
-        _id: 0,
-        tweets: 1,
-      },
-    },
-    {
-      $limit: 1,
-    },
+    ...timelineFilter,
   ])
     .then((tweets) => {
       tweets = tweets[0]?.tweets;
@@ -106,69 +130,7 @@ const show = async (req, res) => {
     {
       $match: { _id: user._id },
     },
-    {
-      $lookup: {
-        from: "follows",
-        localField: "_id",
-        foreignField: "user",
-        as: "follows",
-      },
-    },
-    {
-      $addFields: {
-        following: "$follows.following.user",
-        tweets: "$tweets",
-      },
-    },
-    {
-      $unwind: "$following",
-    },
-    {
-      $lookup: {
-        from: "tweets",
-        let: { followinguser: { $concatArrays: ["$following", ["$_id"]] } },
-        pipeline: [
-          {
-            $lookup: {
-              from: "users",
-              localField: "user",
-              foreignField: "_id",
-              as: "userTweet",
-            },
-          },
-          {
-            $unwind: "$userTweet",
-          },
-          {
-            $addFields: {
-              username: "$userTweet.username",
-            },
-          },
-          {
-            $match: { $expr: { $in: ["$user", "$$followinguser"] } },
-          },
-          {
-            $project: {
-              username: 1,
-              text: 1,
-              attachments: 1,
-              replyPermission: 1,
-              created_at: 1,
-            },
-          },
-        ],
-        as: "tweets",
-      },
-    },
-    {
-      $project: {
-        _id: 0,
-        tweets: 1,
-      },
-    },
-    {
-      $limit: 1,
-    },
+    ...timelineFilter,
   ])
     .then((tweets) => {
       tweets = tweets[0]?.tweets;

@@ -6,6 +6,8 @@ const router = express.Router();
 
 const TweetController = require("../controllers/tweetController");
 
+const TweetReplyRoute = require("./tweetReplyRoute");
+
 /**
  * method   : GET
  * endpoint : "/tweet"
@@ -19,6 +21,8 @@ router.get("/", TweetController.index);
  * return   : tweet
  * */
 router.post("/", TweetController.store);
+
+router.use(TweetReplyRoute.prefix, TweetReplyRoute.router);
 
 module.exports = {
   prefix: PREFIX,
