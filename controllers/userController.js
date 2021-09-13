@@ -38,37 +38,20 @@ const show = (req, res) => {
       },
     },
     {
-      $addFields: {
-        following: "$follows.following",
-        followers: "$follows.followers",
-        description: "$detail.description",
-        location: "$detail.location",
-        link: "$detail.link",
-      },
+      $unwind: "$follows",
     },
     {
-      $unwind: "$following",
+      $unwind: "$detail",
     },
-    {
-      $unwind: "$followers",
-    },
-    {
-      $unwind: "$description",
-    },
-    {
-      $unwind: "$location",
-    },
-    {
-      $unwind: "$link",
-    },
+
     {
       $project: {
         username: true,
-        followers: { $size: "$followers" },
-        following: { $size: "$following" },
-        description: 1,
-        location: 1,
-        link: 1,
+        description: "$detail.description",
+        location: "$detail.location",
+        link: "$detail.link",
+        followers: { $size: "$follows.followers" },
+        following: { $size: "$follows.following" },
       },
     },
     // { $limit: 1 },

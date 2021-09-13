@@ -32,6 +32,9 @@ const index = (req, res) => {
       $unwind: "$detail",
     },
     {
+      $unwind: "$follows",
+    },
+    {
       $project: {
         username: 1,
         description: "$detail.description",
@@ -41,6 +44,7 @@ const index = (req, res) => {
         following: { $size: "$follows.following" },
       },
     },
+    { $limit: 5 },
   ])
     .then((user) => {
       Response.ResponseFormatter.jsonResponse(

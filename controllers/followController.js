@@ -160,7 +160,6 @@ const destroy = async (req, res, next) => {
       }
     );
   } catch (error) {
-    console.log(error);
     next({
       error: error,
       code: Response.ResponseCode.RESPONSE_CODE.RC_INVALID_DATA,
