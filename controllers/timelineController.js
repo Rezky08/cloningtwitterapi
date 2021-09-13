@@ -74,6 +74,8 @@ const timelineFilter = [
             replies: 1,
             replyTo: 1,
             created_at: 1,
+            likes: 1,
+            retweet: 1,
           },
         },
       ],
