@@ -54,16 +54,20 @@ const store = async (req, res, next) => {
       }).save();
     }
 
-    // push to following
-    followUser.following.push({ user: userWantToFollow });
-    followUser
-      .save()
-      .then(() => {
-        // push to followers
-        followUserWantToFollow.followers.push({ user: user });
-        followUserWantToFollow.save();
-      })
-      .catch(() => {});
+    await Follow.updateOne(
+      { _id: followUser._id, "following.user": { $ne: userWantToFollow } },
+      {
+        $addToSet: { following: { user: userWantToFollow } },
+      }
+    );
+
+    // push to followers
+    await Follow.updateOne(
+      { _id: followUserWantToFollow._id, "followers.user": { $ne: user } },
+      {
+        $addToSet: { followers: { user: user } },
+      }
+    );
 
     // send response
     Response.ResponseFormatter.jsonResponse(
