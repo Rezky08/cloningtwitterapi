@@ -99,7 +99,20 @@ const destroy = async (req, res, next) => {
     const user = await User.findById(req.user._id);
 
     if (!user) {
-      throw new Error("Require Credentials");
+      return errorResponse(
+        new Error("Require Credentials"),
+        res,
+        Response.ResponseCode.RESPONSE_CODE.RC_UNAUTHENTICATED
+      );
+    }
+
+    // abort if follow self
+    if (user.equals(userWantToUnfollow)) {
+      return errorResponse(
+        new Error("Cannot unfollow yourself"),
+        res,
+        Response.ResponseCode.RESPONSE_CODE.RC_INVALID_FOLLOW
+      );
     }
 
     // find current user follows

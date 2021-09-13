@@ -85,7 +85,15 @@ const timelineFilter = [
   {
     $project: {
       _id: 0,
-      tweets: 1,
+      tweets: {
+        $filter: {
+          input: "$tweets",
+          as: "tweet",
+          cond: {
+            $not: [{ $in: ["$$tweet.replyTo", "$tweets._id"] }],
+          },
+        },
+      },
     },
   },
   {
