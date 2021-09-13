@@ -18,7 +18,7 @@ router.get("/", TimelineController.index);
  * endpoint : "/timeline/:username"
  * return   : user timeline
  * */
-router.get("/{:username}", TimelineController.show);
+router.get("/:username", TimelineController.show);
 
 module.exports = {
   prefix: PREFIX,
