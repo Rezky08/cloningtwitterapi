@@ -124,19 +124,32 @@ const destroy = async (req, res, next) => {
       }).save();
     }
 
-    // filter to following
-    followUser.following = followUser.following.filter(
-      (following) => following.user == userWantToUnfollow._id
+    console.log(
+      Follow.find({
+        _id: followUser._id,
+        "following.user": userWantToUnfollow,
+      })
     );
-    await followUser.save();
-    console.log("Masuk");
 
-    followUserWantToUnfollow.followers =
-      followUserWantToUnfollow.followers.filter(
-        (follower) => follower.user == user._id
-      );
+    await Follow.updateOne(
+      {
+        _id: followUser._id,
+        "following.user": userWantToUnfollow._id,
+      },
+      {
+        $pull: { following: { user: userWantToUnfollow._id } },
+      }
+    );
 
-    await followUserWantToUnfollow.save();
+    await Follow.updateOne(
+      {
+        _id: followUserWantToUnfollow._id,
+        "followers.user": user._id,
+      },
+      {
+        $pull: { followers: { user: user._id } },
+      }
+    );
 
     // send response
     Response.ResponseFormatter.jsonResponse(
