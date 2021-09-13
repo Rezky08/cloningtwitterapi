@@ -1,0 +1,28 @@
+_id: req_b7d662e08d3945f1993496ac26756e5f
+type: Request
+parentId: fld_18ebac63b385411891481bc38212ef20
+modified: 1625535678173
+created: 1625535605234
+url: "{{ _.baseUrl }}/user/{% response 'body',
+  'req_71835f789b5a4a88b362299f159aa7e7', 'b64::JC5kYXRhLjAuX2lk::46b', 'never',
+  60 %}"
+name: delete user
+description: ""
+method: DELETE
+body:
+  mimeType: application/json
+  text: ""
+parameters: []
+headers:
+  - name: Content-Type
+    value: application/json
+    id: pair_065f132babc64d279b450f7d972af2d0
+authentication: {}
+metaSortKey: -1625390413484.9375
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

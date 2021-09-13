@@ -1,0 +1,30 @@
+_id: req_1d2c32f0ac2a4c69b5c8daca4cc8d790
+type: Request
+parentId: fld_6a36811f643240ee8e20555511231dcc
+modified: 1631497381736
+created: 1625969166784
+url: "{{ _.baseUrl }}/auth/login"
+name: login
+description: ""
+method: POST
+body:
+  mimeType: application/json
+  text: |-
+    {
+    	"username" : "rezky",
+    	"password" : "password"
+    }
+parameters: []
+headers:
+  - name: Content-Type
+    value: application/json
+    id: pair_93f768f9bab5447f887d8ef22b93088e
+authentication: {}
+metaSortKey: -1625969166784
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global

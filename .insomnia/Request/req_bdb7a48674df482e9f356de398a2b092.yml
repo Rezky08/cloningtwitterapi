@@ -1,0 +1,24 @@
+_id: req_bdb7a48674df482e9f356de398a2b092
+type: Request
+parentId: fld_d8ce464ccb854cab9d02697548b67f97
+modified: 1630666540228
+created: 1630635747769
+url: "{{ _.baseUrl }}/unfollow/zaatsiyah"
+name: Unfollow User
+description: ""
+method: POST
+body: {}
+parameters: []
+headers: []
+authentication:
+  type: bearer
+  token: "{% response 'body', 'req_1d2c32f0ac2a4c69b5c8daca4cc8d790',
+    'b64::JC5kYXRhLnRva2Vu::46b', 'never', 60 %}"
+metaSortKey: -1629507599981
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global
