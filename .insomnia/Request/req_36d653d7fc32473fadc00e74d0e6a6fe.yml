@@ -1,20 +1,24 @@
-_id: req_304bdc73b5a24c02a3ca2df97693617d
+_id: req_36d653d7fc32473fadc00e74d0e6a6fe
 type: Request
-parentId: fld_d8ce464ccb854cab9d02697548b67f97
-modified: 1631523738800
-created: 1630596734552
-url: "{{ _.baseUrl }}/follow/rezky"
-name: Follow User
+parentId: fld_917d43b2581640dc982980e51d705a1e
+modified: 1631557570546
+created: 1631519656409
+url: "{{ _.baseUrl }}/search"
+name: Search
 description: ""
-method: POST
+method: GET
 body: {}
-parameters: []
+parameters:
+  - name: q
+    value: ""
+    description: ""
+    id: pair_ebb49b4909cb48c0b08352f44f2a4de1
 headers: []
 authentication:
   type: bearer
   token: "{% response 'body', 'req_1d2c32f0ac2a4c69b5c8daca4cc8d790',
     'b64::JC5kYXRhLnRva2Vu::46b', 'never', 60 %}"
-metaSortKey: -1630596734552
+metaSortKey: -1630799080536.5
 isPrivate: false
 settingStoreCookies: true
 settingSendCookies: true
