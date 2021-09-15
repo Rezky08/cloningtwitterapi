@@ -137,30 +137,23 @@ const destroy = async (req, res, next) => {
       }).save();
     }
 
-    console.log(
-      Follow.find({
-        _id: followUser._id,
-        "following.user": userWantToUnfollow,
-      })
-    );
-
     await Follow.updateOne(
       {
         _id: followUser._id,
-        "following.user": userWantToUnfollow._id,
+        "following.user": userWantToUnfollow,
       },
       {
-        $pull: { following: { user: userWantToUnfollow._id } },
+        $pull: { following: { user: userWantToUnfollow } },
       }
     );
 
     await Follow.updateOne(
       {
         _id: followUserWantToUnfollow._id,
-        "followers.user": user._id,
+        "followers.user": user,
       },
       {
-        $pull: { followers: { user: user._id } },
+        $pull: { followers: { user: user } },
       }
     );
 

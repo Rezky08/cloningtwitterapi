@@ -1,4 +1,4 @@
-const PREFIX = "";
+const PREFIX = "/follow";
 
 const express = require("express");
 
@@ -11,14 +11,14 @@ const FollowController = require("../controllers/followController");
  * endpoint : "/follow/:username"
  * return   : follow{}
  * */
-router.post("/follow/:username", FollowController.store);
+router.post("/:username", FollowController.store);
 
 /**
- * method   : POST
- * endpoint : "/unfollow/:username"
+ * method   : DELETE
+ * endpoint : "/follow/:username"
  * return   : follow{}
  * */
-router.post("/unfollow/:username", FollowController.destroy);
+router.delete("/:username", FollowController.destroy);
 
 module.exports = {
   prefix: PREFIX,
