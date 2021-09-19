@@ -18,6 +18,13 @@ const TweetRetweetRoute = require("./tweetRetweetRoute");
 router.get("/", TweetController.index);
 
 /**
+ * method   : GET
+ * endpoint : "/tweet/:tweetId"
+ * return   : tweet
+ * */
+router.get("/:tweetId", TweetController.show);
+
+/**
  * method   : POST
  * endpoint : "/tweet"
  * return   : tweet
