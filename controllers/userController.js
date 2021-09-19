@@ -1,5 +1,6 @@
 const Response = require("../responses");
 const User = require("../models/User");
+const mongoose = require("mongoose");
 
 const index = (req, res) => {
   User.find()
@@ -52,6 +53,30 @@ const show = (req, res) => {
         link: "$detail.link",
         followers: { $size: "$follows.followers" },
         following: { $size: "$follows.following" },
+        followed: {
+          $cond: {
+            if: {
+              $in: [
+                mongoose.Types.ObjectId(req?.user?._id),
+                "$follows.followers.user",
+              ],
+            },
+            then: true,
+            else: false,
+          },
+        },
+        followedback: {
+          $cond: {
+            if: {
+              $in: [
+                mongoose.Types.ObjectId(req?.user?._id),
+                "$follows.following.user",
+              ],
+            },
+            then: true,
+            else: false,
+          },
+        },
       },
     },
     // { $limit: 1 },
