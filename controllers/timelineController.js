@@ -62,7 +62,7 @@ const timelineFilter = [
         },
         {
           $sort: {
-            created_at: -1,
+            "replies.created_at": -1,
           },
         },
         {
