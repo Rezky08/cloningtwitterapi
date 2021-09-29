@@ -1,7 +1,7 @@
 _id: req_feca016a2eb24bd9b992604d4077737e
 type: Request
 parentId: fld_6a36811f643240ee8e20555511231dcc
-modified: 1631500790369
+modified: 1632329562634
 created: 1625620093215
 url: "{{ _.baseUrl }}/auth/register"
 name: register
@@ -11,7 +11,7 @@ body:
   mimeType: application/json
   text: |-
     {
-    	"username" : "zaatsiyah",
+    	"username" : "rezky",
     	"password" : "password"
     }
 parameters: []

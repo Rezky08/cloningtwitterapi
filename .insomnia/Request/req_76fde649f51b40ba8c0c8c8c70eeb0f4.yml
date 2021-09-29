@@ -1,7 +1,7 @@
 _id: req_76fde649f51b40ba8c0c8c8c70eeb0f4
 type: Request
 parentId: fld_943d9ffd09cf42f2a49abbbb917c27fa
-modified: 1631497393829
+modified: 1631558015406
 created: 1628418465409
 url: "{{ _.baseUrl }}/tweet"
 name: Create Tweet
@@ -11,7 +11,7 @@ body:
   mimeType: application/json
   text: |-
     {
-    	"text" : "ya begitulah"
+    	"text" : "ini tweet pertama di sini"
     }	
 parameters: []
 headers:

@@ -1,7 +1,7 @@
 _id: req_68ce4413df6246c08e619dd088190367
 type: Request
 parentId: fld_6a36811f643240ee8e20555511231dcc
-modified: 1625976519689
+modified: 1631810629932
 created: 1625970599572
 url: "{{ _.baseUrl }}/auth/me"
 name: me
@@ -9,11 +9,13 @@ description: ""
 method: GET
 body: {}
 parameters: []
-headers: []
-authentication:
-  type: bearer
-  token: "{% response 'body', 'req_1d2c32f0ac2a4c69b5c8daca4cc8d790',
-    'b64::JC5kYXRhLnRva2Vu::46b', 'never', 60 %}"
+headers:
+  - name: Authorization
+    value: Bearer
+      eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MTQxOTAxNThlMmVlMjAwMDRlZjc0ODciLCJ1c2VybmFtZSI6InJlemt5IiwiaWF0IjoxNjMxODEwNDUxLCJleHAiOjE2MzE4MTQwNTF9.OmFN0b2kBzDvRwlSv5JvL9sjyka8_mGD0nBNFIVIErA
+    description: ""
+    id: pair_76611e235c5248d29939faa9129a1e47
+authentication: {}
 metaSortKey: -1625681878614
 isPrivate: false
 settingStoreCookies: true

@@ -1,9 +1,9 @@
 _id: req_d14a3b935f644afab517573f5e644929
 type: Request
 parentId: fld_7c54746f7b1f4785b6b0ec59b4499893
-modified: 1631505447597
+modified: 1631685935696
 created: 1631497581355
-url: "{{ _.baseUrl }}/timeline/rezky"
+url: "{{ _.baseUrl }}/timeline/zaatsiyah"
 name: Get User Timeline
 description: ""
 method: GET

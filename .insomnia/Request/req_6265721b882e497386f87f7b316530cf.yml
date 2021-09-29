@@ -1,12 +1,14 @@
-_id: req_304bdc73b5a24c02a3ca2df97693617d
+_id: req_6265721b882e497386f87f7b316530cf
 type: Request
-parentId: fld_d8ce464ccb854cab9d02697548b67f97
-modified: 1631876033599
-created: 1630596734552
-url: "{{ _.baseUrl }}/follow/zaatsiyah"
-name: Follow User
+parentId: fld_943d9ffd09cf42f2a49abbbb917c27fa
+modified: 1631630812635
+created: 1631630801010
+url: "{{ _.baseUrl }}/tweet/like/{% response 'body',
+  'req_32cb0cd0198647e28be4acccf2238d98', 'b64::JC5kYXRhLjAuX2lk::46b', 'never',
+  60 %}"
+name: Unlike Tweet
 description: ""
-method: POST
+method: DELETE
 body: {}
 parameters: []
 headers: []
@@ -14,7 +16,7 @@ authentication:
   type: bearer
   token: "{% response 'body', 'req_1d2c32f0ac2a4c69b5c8daca4cc8d790',
     'b64::JC5kYXRhLnRva2Vu::46b', 'never', 60 %}"
-metaSortKey: -1630596734552
+metaSortKey: -1627423437843.1875
 isPrivate: false
 settingStoreCookies: true
 settingSendCookies: true

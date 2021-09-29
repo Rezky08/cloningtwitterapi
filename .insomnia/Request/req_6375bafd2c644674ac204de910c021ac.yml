@@ -1,9 +1,11 @@
 _id: req_6375bafd2c644674ac204de910c021ac
 type: Request
 parentId: fld_943d9ffd09cf42f2a49abbbb917c27fa
-modified: 1631519151297
+modified: 1631558082535
 created: 1631499676748
-url: "{{ _.baseUrl }}/tweet/reply/613ecc9396b8a320f0cf55ed"
+url: "{{ _.baseUrl }}/tweet/reply/{% response 'body',
+  'req_32cb0cd0198647e28be4acccf2238d98', 'b64::JC5kYXRhLjAuX2lk::46b', 'never',
+  60 %}"
 name: Reply Tweet
 description: ""
 method: POST
@@ -11,7 +13,7 @@ body:
   mimeType: application/json
   text: |-
     {
-    	"text" : "gaboleh gitu ngomong nya"
+    	"text" : "ini reply pertama disini"
     }	
 parameters: []
 headers:
