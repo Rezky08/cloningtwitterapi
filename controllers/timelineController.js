@@ -39,7 +39,6 @@ const timelineFilter = [
       from: "tweets",
       let: { followinguser: { $concatArrays: ["$following", ["$_id"]] } },
       pipeline: [
-        graphReplies,
         {
           $lookup: {
             from: "users",
@@ -48,7 +47,6 @@ const timelineFilter = [
             as: "userTweet",
           },
         },
-
         {
           $unwind: "$userTweet",
         },
@@ -60,9 +58,19 @@ const timelineFilter = [
         {
           $match: { $expr: { $in: ["$user", "$$followinguser"] } },
         },
+        graphReplies,
         {
-          $sort: {
-            "replies.created_at": -1,
+          $lookup: {
+            from: "users",
+            let: {
+              replyuser: "$replies.user",
+            },
+            pipeline: [
+              {
+                $match: { $expr: { $in: ["$_id", "$$replyuser"] } },
+              },
+            ],
+            as: "replyUsers",
           },
         },
         {
@@ -72,6 +80,8 @@ const timelineFilter = [
             attachments: 1,
             replyPermission: 1,
             replies: 1,
+            "replyUsers._id": 1,
+            "replyUsers.username": 1,
             replyTo: 1,
             created_at: 1,
             likes: 1,
@@ -82,6 +92,7 @@ const timelineFilter = [
       as: "tweets",
     },
   },
+
   {
     $project: {
       _id: 0,
@@ -101,6 +112,22 @@ const timelineFilter = [
   },
 ];
 
+const preparedTweetBeforeShow = (tweets) => {
+  tweets?.map((tweet) => {
+    tweet.replies = tweet?.replies?.map((reply) => {
+      reply.user = tweet?.replyUsers?.find(
+        (replyUser) => String(reply.user) === String(replyUser._id)
+      );
+      return reply;
+    });
+    tweet.replies = tweet?.replies?.sort(function (a, b) {
+      return new Date(b.created_at) - new Date(a.created_at);
+    });
+    return tweet;
+  });
+  return tweets;
+};
+
 const index = (req, res) => {
   User.aggregate([
     {
@@ -110,6 +137,8 @@ const index = (req, res) => {
   ])
     .then((tweets) => {
       tweets = tweets[0]?.tweets;
+      tweets = preparedTweetBeforeShow(tweets);
+
       Response.ResponseFormatter.jsonResponse(
         res,
         Response.ResponseCode.RESPONSE_CODE.RC_SUCCESS,
@@ -117,6 +146,7 @@ const index = (req, res) => {
       );
     })
     .catch((err) => {
+      console.log(err);
       Response.ResponseFormatter.jsonResponse(
         res,
         Response.ResponseCode.RESPONSE_CODE.RC_SUCCESS,
@@ -144,6 +174,7 @@ const show = async (req, res) => {
   ])
     .then((tweets) => {
       tweets = tweets[0]?.tweets;
+      tweets = preparedTweetBeforeShow(tweets);
       Response.ResponseFormatter.jsonResponse(
         res,
         Response.ResponseCode.RESPONSE_CODE.RC_SUCCESS,
