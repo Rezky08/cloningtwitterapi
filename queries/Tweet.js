@@ -5,6 +5,7 @@ const graphLookupTweetReplies = {
     connectFromField: "_id",
     connectToField: "replyTo",
     depthField: "depth",
+    maxDepth: 2,
     as: "replies",
   },
 };
@@ -23,6 +24,40 @@ const tweetDisplay = {
     retweet: 1,
   },
 };
+const tweetPipelines = [
+  {
+    $lookup: {
+      from: "users",
+      localField: "user",
+      foreignField: "_id",
+      as: "userTweet",
+    },
+  },
+  {
+    $unwind: "$userTweet",
+  },
+  {
+    $addFields: {
+      username: "$userTweet.username",
+    },
+  },
+  graphLookupTweetReplies,
+  {
+    $lookup: {
+      from: "users",
+      let: {
+        replyuser: "$replies.user",
+      },
+      pipeline: [
+        {
+          $match: { $expr: { $in: ["$_id", "$$replyuser"] } },
+        },
+      ],
+      as: "replyUsers",
+    },
+  },
+  tweetDisplay,
+];
 
 const timelinePipelines = [
   {
@@ -48,40 +83,9 @@ const timelinePipelines = [
       let: { followinguser: { $concatArrays: ["$following", ["$_id"]] } },
       pipeline: [
         {
-          $lookup: {
-            from: "users",
-            localField: "user",
-            foreignField: "_id",
-            as: "userTweet",
-          },
-        },
-        {
-          $unwind: "$userTweet",
-        },
-        {
-          $addFields: {
-            username: "$userTweet.username",
-          },
-        },
-        {
           $match: { $expr: { $in: ["$user", "$$followinguser"] } },
         },
-        graphLookupTweetReplies,
-        {
-          $lookup: {
-            from: "users",
-            let: {
-              replyuser: "$replies.user",
-            },
-            pipeline: [
-              {
-                $match: { $expr: { $in: ["$_id", "$$replyuser"] } },
-              },
-            ],
-            as: "replyUsers",
-          },
-        },
-        tweetDisplay,
+        ...tweetPipelines,
       ],
       as: "tweets",
     },
@@ -130,5 +134,6 @@ module.exports = {
   graphLookupTweetReplies,
   tweetDisplay,
   timelinePipelines,
+  tweetPipelines,
   tweetsRepliesSort,
 };

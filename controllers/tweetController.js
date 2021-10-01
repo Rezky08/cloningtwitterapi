@@ -25,7 +25,7 @@ const index = (req, res) => {
 };
 
 const tweetFilter = (tweetId) => [
-  ...TweetQueries.timelinePipelines,
+  ...TweetQueries.tweetPipelines,
   {
     $match: { _id: mongoose.Types.ObjectId(tweetId) },
   },
