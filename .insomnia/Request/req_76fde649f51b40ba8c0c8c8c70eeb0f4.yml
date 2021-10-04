@@ -12,7 +12,7 @@ body:
   text: |-
     {
     	"text" : "ini tweet pertama di sini"
-    }	
+    }
 parameters: []
 headers:
   - name: Content-Type

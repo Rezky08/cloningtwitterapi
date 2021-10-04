@@ -1,17 +1,9 @@
 _id: req_1d2c32f0ac2a4c69b5c8daca4cc8d790
 type: Request
 parentId: fld_6a36811f643240ee8e20555511231dcc
-modified: 1632038191745
-created: 1625969166784
-url: "{{ _.baseUrl }}/auth/login"
-name: login
-description: ""
-method: POST
-body:
-  mimeType: application/json
-  text: |-
     {
-    	"username" : "rezky",
+    	"username" : "rezky06",
+>>>>>>> main
     	"password" : "password"
     }
 parameters: []
