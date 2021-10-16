@@ -1,6 +1,7 @@
 const express = require("express");
 const jwt = require("express-jwt");
 const cors = require("cors");
+const fileUpload = require("express-fileupload");
 
 const mongoose = require("mongoose");
 const database = require("./config/database");
@@ -35,6 +36,14 @@ mongoose.set("useCreateIndex", true);
 //   console.log(method);
 // });
 
+// enable files upload
+app.use(
+  fileUpload({
+    createParentPath: true,
+  })
+);
+// app.use("/uploads", express.static("file_uploads/images/"));
+
 // middleware
 app.use(
   express.urlencoded({
@@ -57,6 +66,7 @@ const TweetRouter = require("./routes/tweetRoute");
 const FollowRouter = require("./routes/followRoute");
 const TimelineRouter = require("./routes/timelineRoute");
 const SearchRoute = require("./routes/searchRoute");
+const UploadRoute = require("./routes/uploadRoute");
 
 app.use(UserRouter.prefix, UserRouter.router);
 app.use(AuthRouter.prefix, AuthRouter.router);
@@ -64,6 +74,7 @@ app.use(TweetRouter.prefix, TweetRouter.router);
 app.use(FollowRouter.prefix, FollowRouter.router);
 app.use(TimelineRouter.prefix, TimelineRouter.router);
 app.use(SearchRoute.prefix, SearchRoute.router);
+app.use(UploadRoute.prefix, UploadRoute.router);
 
 // 404 exception
 
