@@ -1,14 +1,39 @@
-const graphLookupTweetReplies = {
-  $graphLookup: {
-    from: "tweets",
-    startWith: "$_id",
-    connectFromField: "_id",
-    connectToField: "replyTo",
-    depthField: "depth",
-    maxDepth: 2,
-    as: "replies",
+const graphLookupTweetReplies = [
+  {
+    $graphLookup: {
+      from: "tweets",
+      startWith: "$_id",
+      connectFromField: "_id",
+      connectToField: "replyTo",
+      depthField: "depth",
+      maxDepth: 2,
+      as: "replies",
+    },
   },
-};
+  {
+    $lookup: {
+      from: "tweets",
+      let: {
+        repliesid: "$replies._id",
+      },
+      pipeline: [
+        {
+          $match: {
+            $expr: {
+              $in: ["$_id", "$$repliesid"],
+            },
+          },
+        },
+        {
+          $sort: {
+            created_at: 1,
+          },
+        },
+      ],
+      as: "replies",
+    },
+  },
+];
 const tweetDisplay = {
   $project: {
     username: 1,
@@ -41,7 +66,7 @@ const tweetPipelines = [
       username: "$userTweet.username",
     },
   },
-  graphLookupTweetReplies,
+  ...graphLookupTweetReplies,
   {
     $lookup: {
       from: "users",
@@ -115,7 +140,7 @@ const repliesSort = (tweet) => {
     return reply;
   });
   tweet.replies = tweet?.replies?.sort(function (a, b) {
-    return new Date(b.created_at) - new Date(a.created_at);
+    return new Date(a.created_at) - new Date(b.created_at);
   });
   return tweet;
 };

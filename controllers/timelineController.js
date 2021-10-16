@@ -15,7 +15,6 @@ const index = (req, res) => {
   ])
     .then((tweets) => {
       tweets = tweets[0]?.tweets;
-      tweets = TweetQueries.tweetsRepliesSort(tweets);
 
       Response.ResponseFormatter.jsonResponse(
         res,
@@ -52,7 +51,6 @@ const show = async (req, res) => {
   ])
     .then((tweets) => {
       tweets = tweets[0]?.tweets;
-      tweets = TweetQueries.tweetsRepliesSort(tweets);
       Response.ResponseFormatter.jsonResponse(
         res,
         Response.ResponseCode.RESPONSE_CODE.RC_SUCCESS,
