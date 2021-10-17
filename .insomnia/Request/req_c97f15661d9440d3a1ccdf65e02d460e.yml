@@ -1,0 +1,26 @@
+_id: req_c97f15661d9440d3a1ccdf65e02d460e
+type: Request
+parentId: fld_943d9ffd09cf42f2a49abbbb917c27fa
+modified: 1634467823788
+created: 1634467689305
+url: "{{ _.baseUrl }}/tweet/like/{% response 'body',
+  'req_71fedefd5f4e4799ad8413cd01becbd5', 'b64::JC5kYXRhLjAuX2lk::46b', 'never',
+  60 %}"
+name: Unlike Tweet
+description: ""
+method: DELETE
+body: {}
+parameters: []
+headers: []
+authentication:
+  type: bearer
+  token: "{% response 'body', 'req_1d2c32f0ac2a4c69b5c8daca4cc8d790',
+    'b64::JC5kYXRhLnRva2Vu::46b', 'never', 60 %}"
+metaSortKey: -1628418465435
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global
