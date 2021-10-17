@@ -1,10 +1,10 @@
-_id: req_eb425670479445e798fe62c4c9862ff7
+_id: req_39f312d6608249fb9b1f827a5fa83de6
 type: Request
-parentId: fld_18ebac63b385411891481bc38212ef20
-modified: 1634428357226
-created: 1625441108388
-url: "{{ _.baseUrl }}/user/rezky"
-name: show user
+parentId: fld_82b17b25db8a41e7874da5230c4f05c4
+modified: 1634428379108
+created: 1634428374589
+url: "{{ _.baseUrl }}/timeline/zaatsiyah"
+name: Get User Timeline
 description: ""
 method: GET
 body: {}
@@ -14,7 +14,7 @@ authentication:
   type: bearer
   token: "{% response 'body', 'req_1d2c32f0ac2a4c69b5c8daca4cc8d790',
     'b64::JC5kYXRhLnRva2Vu::46b', 'never', 60 %}"
-metaSortKey: -1625392203610.25
+metaSortKey: -1631423164069
 isPrivate: false
 settingStoreCookies: true
 settingSendCookies: true
