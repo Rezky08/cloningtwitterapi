@@ -1,0 +1,24 @@
+_id: req_71fedefd5f4e4799ad8413cd01becbd5
+type: Request
+parentId: fld_82b17b25db8a41e7874da5230c4f05c4
+modified: 1634427936525
+created: 1634427862728
+url: "{{ _.baseUrl }}/timeline"
+name: Get Self Timeline
+description: ""
+method: GET
+body: {}
+parameters: []
+headers: []
+authentication:
+  type: bearer
+  token: "{% response 'body', 'req_1d2c32f0ac2a4c69b5c8daca4cc8d790',
+    'b64::JC5kYXRhLnRva2Vu::46b', 'never', 60 %}"
+metaSortKey: -1634427862728
+isPrivate: false
+settingStoreCookies: true
+settingSendCookies: true
+settingDisableRenderRequestBody: false
+settingEncodeUrl: true
+settingRebuildPath: true
+settingFollowRedirects: global
