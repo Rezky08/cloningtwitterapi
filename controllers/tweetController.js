@@ -4,10 +4,7 @@ const mongoose = require("mongoose");
 const TweetQueries = require("../queries/Tweet");
 
 const index = (req, res) => {
-  Tweet.find()
-    .select("-__v")
-    .populate({ path: "user", select: "username _id" })
-    .exec()
+  Tweet.aggregate(TweetQueries.tweetPipelines)
     .then((tweets) => {
       Response.ResponseFormatter.jsonResponse(
         res,
