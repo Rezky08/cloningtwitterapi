@@ -11,6 +11,11 @@ const graphLookupTweetReplies = [
     },
   },
   {
+    $addFields: {
+      repliesCount: { $size: "$replies" },
+    },
+  },
+  {
     $lookup: {
       from: "tweets",
       let: {
@@ -45,8 +50,11 @@ const tweetDisplay = {
     "replyUsers.username": 1,
     replyTo: 1,
     created_at: 1,
-    likes: 1,
-    retweet: 1,
+    count: {
+      replies: "$repliesCount",
+      likes: { $size: "$likes" },
+      retweet: { $size: "$retweet" },
+    },
   },
 };
 const tweetPipelines = [
