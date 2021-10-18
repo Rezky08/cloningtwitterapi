@@ -43,14 +43,14 @@ const tweetDisplay = (user_id = null) => {
   };
 };
 
-const tweetDisplayFiltered = () => {
-  const filtered = Object.entries(tweetDisplay().$project).filter(
+const tweetDisplayFiltered = (req) => {
+  const filtered = Object.entries(tweetDisplay(req?.user?._id).$project).filter(
     ([key, value]) => key !== "replies"
   );
   return Object.fromEntries(filtered);
 };
 
-const graphLookupTweetReplies = [
+const graphLookupTweetReplies = (req) => [
   ...graphLookupTweetRepliesOnly,
   {
     $lookup: {
@@ -73,7 +73,7 @@ const graphLookupTweetReplies = [
           },
         },
         {
-          $project: tweetDisplayFiltered(),
+          $project: tweetDisplayFiltered(req),
         },
       ],
       as: "replies",
@@ -99,7 +99,7 @@ const tweetPipelines = (req) => {
         username: "$userTweet.username",
       },
     },
-    ...graphLookupTweetReplies,
+    ...graphLookupTweetReplies(req),
     {
       $lookup: {
         from: "users",
