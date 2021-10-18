@@ -82,7 +82,6 @@ const graphLookupTweetReplies = [
 ];
 
 const tweetPipelines = (req) => {
-  console.log(req);
   return [
     {
       $lookup: {
