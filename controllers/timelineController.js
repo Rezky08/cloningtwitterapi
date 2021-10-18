@@ -11,7 +11,7 @@ const index = (req, res) => {
     {
       $match: { _id: ObjectId(req?.user?._id) },
     },
-    ...TweetQueries.timelinePipelines,
+    ...TweetQueries.timelinePipelines(req),
   ])
     .then((tweets) => {
       tweets = tweets[0]?.tweets;

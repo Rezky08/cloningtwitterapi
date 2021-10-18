@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const TweetQueries = require("../queries/Tweet");
 
 const index = (req, res) => {
-  Tweet.aggregate(TweetQueries.tweetPipelines)
+  Tweet.aggregate(TweetQueries.tweetPipelines(req))
     .then((tweets) => {
       Response.ResponseFormatter.jsonResponse(
         res,
@@ -21,18 +21,8 @@ const index = (req, res) => {
     });
 };
 
-const tweetFilter = (tweetId) => [
-  ...TweetQueries.tweetPipelines,
-  {
-    $match: { _id: mongoose.Types.ObjectId(tweetId) },
-  },
-  {
-    $limit: 1,
-  },
-];
-
 const show = (req, res) => {
-  Tweet.aggregate(tweetFilter(req.params?.tweetId))
+  Tweet.aggregate(TweetQueries.tweetFilter(req))
     .then((tweets) => {
       Response.ResponseFormatter.jsonResponse(
         res,

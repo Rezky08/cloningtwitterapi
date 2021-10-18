@@ -1,4 +1,6 @@
-const graphLookupTweetReplies = [
+const mongoose = require("mongoose");
+
+const graphLookupTweetRepliesOnly = [
   {
     $graphLookup: {
       from: "tweets",
@@ -15,6 +17,41 @@ const graphLookupTweetReplies = [
       repliesCount: { $size: "$replies" },
     },
   },
+];
+const tweetDisplay = (user_id = null) => {
+  return {
+    $project: {
+      username: 1,
+      text: 1,
+      attachments: 1,
+      replyPermission: 1,
+      replies: 1,
+      "replyUsers._id": 1,
+      "replyUsers.username": 1,
+      replyTo: 1,
+      created_at: 1,
+      flag: {
+        liked: { $in: [mongoose.Types.ObjectId(user_id), "$likes"] },
+        retweeted: { $in: [mongoose.Types.ObjectId(user_id), "$retweet"] },
+      },
+      count: {
+        replies: "$repliesCount",
+        likes: { $size: "$likes" },
+        retweet: { $size: "$retweet" },
+      },
+    },
+  };
+};
+
+const tweetDisplayFiltered = () => {
+  const filtered = Object.entries(tweetDisplay().$project).filter(
+    ([key, value]) => key !== "replies"
+  );
+  return Object.fromEntries(filtered);
+};
+
+const graphLookupTweetReplies = [
+  ...graphLookupTweetRepliesOnly,
   {
     $lookup: {
       from: "tweets",
@@ -29,70 +66,60 @@ const graphLookupTweetReplies = [
             },
           },
         },
+        ...graphLookupTweetRepliesOnly,
         {
           $sort: {
             created_at: 1,
           },
+        },
+        {
+          $project: tweetDisplayFiltered(),
         },
       ],
       as: "replies",
     },
   },
 ];
-const tweetDisplay = {
-  $project: {
-    username: 1,
-    text: 1,
-    attachments: 1,
-    replyPermission: 1,
-    replies: 1,
-    "replyUsers._id": 1,
-    "replyUsers.username": 1,
-    replyTo: 1,
-    created_at: 1,
-    count: {
-      replies: "$repliesCount",
-      likes: { $size: "$likes" },
-      retweet: { $size: "$retweet" },
-    },
-  },
-};
-const tweetPipelines = [
-  {
-    $lookup: {
-      from: "users",
-      localField: "user",
-      foreignField: "_id",
-      as: "userTweet",
-    },
-  },
-  {
-    $unwind: "$userTweet",
-  },
-  {
-    $addFields: {
-      username: "$userTweet.username",
-    },
-  },
-  ...graphLookupTweetReplies,
-  {
-    $lookup: {
-      from: "users",
-      let: {
-        replyuser: "$replies.user",
-      },
-      pipeline: [
-        {
-          $match: { $expr: { $in: ["$_id", "$$replyuser"] } },
-        },
-      ],
-      as: "replyUsers",
-    },
-  },
-  tweetDisplay,
-];
 
-const timelinePipelines = [
+const tweetPipelines = (req) => {
+  console.log(req);
+  return [
+    {
+      $lookup: {
+        from: "users",
+        localField: "user",
+        foreignField: "_id",
+        as: "userTweet",
+      },
+    },
+    {
+      $unwind: "$userTweet",
+    },
+    {
+      $addFields: {
+        username: "$userTweet.username",
+      },
+    },
+    ...graphLookupTweetReplies,
+    {
+      $lookup: {
+        from: "users",
+        let: {
+          replyuser: "$replies.user",
+        },
+        pipeline: [
+          {
+            $match: { $expr: { $in: ["$_id", "$$replyuser"] } },
+          },
+        ],
+        as: "replyUsers",
+      },
+    },
+    tweetDisplay(req?.user?._id),
+  ];
+};
+
+const timelinePipelines = (req) => [
   {
     $lookup: {
       from: "follows",
@@ -118,7 +145,7 @@ const timelinePipelines = [
         {
           $match: { $expr: { $in: ["$user", "$$followinguser"] } },
         },
-        ...tweetPipelines,
+        ...tweetPipelines(req),
       ],
       as: "tweets",
     },
@@ -163,10 +190,21 @@ const tweetsRepliesSort = (tweets) => {
   }
 };
 
+const tweetFilter = (req) => [
+  ...tweetPipelines(req),
+  {
+    $match: { _id: mongoose.Types.ObjectId(req?.params?.tweetId) },
+  },
+  {
+    $limit: 1,
+  },
+];
+
 module.exports = {
   graphLookupTweetReplies,
   tweetDisplay,
   timelinePipelines,
   tweetPipelines,
   tweetsRepliesSort,
+  tweetFilter,
 };

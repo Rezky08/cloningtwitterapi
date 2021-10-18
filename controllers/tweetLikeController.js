@@ -1,5 +1,6 @@
 const Response = require("../responses");
 const Tweet = require("../models/Tweet");
+const TweetController = require("./tweetController");
 
 const store = async (req, res) => {
   const tweet = await Tweet.findById(req.params.tweetId);
@@ -18,10 +19,8 @@ const store = async (req, res) => {
         likes: req.user._id,
       },
     })
-    .then((likeTweet) => {
-      Response.ResponseFormatter.jsonResponse(res, undefined, {
-        likeTweet,
-      });
+    .then(() => {
+      TweetController.show(req, res);
     })
     .catch((err) => {
       Response.ResponseFormatter.invalidValidationResponse(err, res);
@@ -45,10 +44,8 @@ const destroy = async (req, res) => {
         likes: req.user._id,
       },
     })
-    .then((likeTweet) => {
-      Response.ResponseFormatter.jsonResponse(res, undefined, {
-        likeTweet,
-      });
+    .then(() => {
+      TweetController.show(req, res);
     })
     .catch((err) => {
       Response.ResponseFormatter.invalidValidationResponse(err, res);
