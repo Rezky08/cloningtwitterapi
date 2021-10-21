@@ -1,5 +1,8 @@
 const Response = require("../responses");
 const Tweet = require("../models/Tweet");
+const TweetQueries = require("../queries/Tweet");
+const PaginationQueries = require("../queries/Pagination");
+const mongoose = require("mongoose");
 
 const store = async (req, res) => {
   const tweet = await Tweet.findById(req.params.tweetId);
@@ -26,4 +29,18 @@ const store = async (req, res) => {
     });
 };
 
-module.exports = { store };
+const show = async (req, res) => {
+  Tweet.aggregate([
+    { $match: { _id: mongoose.Types.ObjectId(req.params.tweetId) } },
+    ...TweetQueries.graphLookupTweetReplies(req),
+  ])
+    .then((tweets) => {
+      tweet = tweets[0] ?? {};
+      Response.ResponseFormatter.jsonResponse(res, undefined, tweet?.replies);
+    })
+    .catch((err) => {
+      Response.ResponseFormatter.invalidValidationResponse(err, res);
+    });
+};
+
+module.exports = { store, show };

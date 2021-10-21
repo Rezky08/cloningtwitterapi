@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Pagination = require("./Pagination");
 
 const graphLookupTweetRepliesOnly = [
   {
@@ -69,9 +70,10 @@ const graphLookupTweetReplies = (req) => [
         ...graphLookupTweetRepliesOnly,
         {
           $sort: {
-            created_at: 1,
+            _id: 1,
           },
         },
+        ...Pagination.pagination(req?.query?.page, req?.query?.perpage),
         {
           $project: tweetDisplayFiltered(req),
         },
