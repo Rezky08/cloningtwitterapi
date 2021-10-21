@@ -51,7 +51,7 @@ const tweetDisplayFiltered = (req) => {
   return Object.fromEntries(filtered);
 };
 
-const graphLookupTweetReplies = (req) => [
+const graphLookupTweetReplies = (req, needPagination = false) => [
   ...graphLookupTweetRepliesOnly,
   {
     $lookup: {
@@ -73,11 +73,13 @@ const graphLookupTweetReplies = (req) => [
             _id: 1,
           },
         },
-        ...Pagination.pagination(req?.query?.page, req?.query?.perpage),
+        ...(needPagination
+          ? Pagination.pagination(req?.query?.page, req?.query?.perpage)
+          : Pagination.pagination()),
         {
           $project: tweetDisplayFiltered(req),
         },
-      ],
+      ].filter((value) => value != null),
       as: "replies",
     },
   },
@@ -120,7 +122,7 @@ const tweetPipelines = (req) => {
   ];
 };
 
-const timelinePipelines = (req) => [
+const timelinePipelines = (req, needPagination = false) => [
   {
     $lookup: {
       from: "follows",
@@ -147,6 +149,9 @@ const timelinePipelines = (req) => [
           $match: { $expr: { $in: ["$user", "$$followinguser"] } },
         },
         ...tweetPipelines(req),
+        ...(needPagination
+          ? Pagination.pagination(req?.query?.page, req?.query?.perpage)
+          : Pagination.pagination()),
       ],
       as: "tweets",
     },
