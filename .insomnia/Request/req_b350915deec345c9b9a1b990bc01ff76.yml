@@ -1,14 +1,14 @@
-_id: req_efa0c635b6024e3a992b760f2911e441
+_id: req_b350915deec345c9b9a1b990bc01ff76
 type: Request
-parentId: fld_943d9ffd09cf42f2a49abbbb917c27fa
-modified: 1634904573948
-created: 1628420358306
-url: "{{ _.baseUrl }}/tweet/{% response 'body',
-  'req_71fedefd5f4e4799ad8413cd01becbd5', 'b64::JC5kYXRhLjAuX2lk::46b', 'never',
-  60 %}"
-name: Get Tweets
+parentId: fld_07ad69ba55e6472697eb0a630b525d4a
+modified: 1634864381426
+created: 1634864378311
+url: "{{ _.baseUrl }}/follow/{% response 'body',
+  'req_eb425670479445e798fe62c4c9862ff7', 'b64::JC5kYXRhLnVzZXJuYW1l::46b',
+  'never', 60 %}"
+name: Unfollow User
 description: ""
-method: GET
+method: DELETE
 body: {}
 parameters: []
 headers: []
@@ -16,7 +16,7 @@ authentication:
   type: bearer
   token: "{% response 'body', 'req_1d2c32f0ac2a4c69b5c8daca4cc8d790',
     'b64::JC5kYXRhLnRva2Vu::46b', 'never', 60 %}"
-metaSortKey: -1627193816097
+metaSortKey: -1634782631237.5
 isPrivate: false
 settingStoreCookies: true
 settingSendCookies: true
