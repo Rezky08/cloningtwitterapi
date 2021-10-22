@@ -70,7 +70,7 @@ const graphLookupTweetReplies = (req, needPagination = false) => [
         ...graphLookupTweetRepliesOnly,
         {
           $sort: {
-            _id: 1,
+            _id: -1,
           },
         },
         ...(needPagination
@@ -138,17 +138,70 @@ const timelinePipelines = (req, needPagination = false) => [
     },
   },
   {
-    $unwind: "$following",
+    $unwind: {
+      path: "$following",
+      preserveNullAndEmptyArrays: true,
+    },
   },
   {
     $lookup: {
       from: "tweets",
-      let: { followinguser: { $concatArrays: ["$following", ["$_id"]] } },
+      let: {
+        followinguser: {
+          $concatArrays: [
+            "$following",
+            {
+              $cond: {
+                if: {
+                  $eq: [mongoose.Types.ObjectId(req?.user?._id), "$_id"],
+                },
+                then: ["$_id"],
+                else: [],
+              },
+            },
+          ],
+        },
+        userid: "$_id",
+      },
       pipeline: [
         {
-          $match: { $expr: { $in: ["$user", "$$followinguser"] } },
+          $match: {
+            $and: [
+              {
+                $or: [
+                  { $expr: { $in: ["$user", "$$followinguser"] } },
+                  {
+                    $expr: {
+                      $and: [
+                        { $setIsSubset: ["$likes", "$$followinguser"] },
+                        {
+                          $and: [
+                            {
+                              $gt: [{ $size: "$likes" }, 0],
+                            },
+                            {
+                              $gt: [{ $size: "$$followinguser" }, 0],
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                  },
+                  {
+                    $expr: { $eq: ["$$userid", "$user"] },
+                  },
+                ],
+              },
+              { replyTo: null },
+            ],
+          },
         },
         ...tweetPipelines(req),
+        {
+          $sort: {
+            _id: -1,
+          },
+        },
         ...(needPagination
           ? Pagination.pagination(req?.query?.page, req?.query?.perpage)
           : Pagination.pagination()),
@@ -160,16 +213,6 @@ const timelinePipelines = (req, needPagination = false) => [
   {
     $project: {
       _id: 0,
-      tweets: {
-        $filter: {
-          input: "$tweets",
-          as: "tweet",
-          cond: {
-            $not: [{ $in: ["$$tweet.replyTo", "$tweets._id"] }],
-          },
-        },
-      },
-    },
   },
 ];
 
