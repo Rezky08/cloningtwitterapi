@@ -1,12 +1,14 @@
-_id: req_39f312d6608249fb9b1f827a5fa83de6
+_id: req_4838f1e5c91747cd87c6b4d0f6d62c24
 type: Request
-parentId: fld_82b17b25db8a41e7874da5230c4f05c4
-modified: 1634859995623
-created: 1634428374589
-url: "{{ _.baseUrl }}/timeline/rezky"
-name: Get User Timeline
+parentId: fld_07ad69ba55e6472697eb0a630b525d4a
+modified: 1634864044523
+created: 1634863973286
+url: "{{ _.baseUrl }}/follow/{% response 'body',
+  'req_eb425670479445e798fe62c4c9862ff7', 'b64::JC5kYXRhLnVzZXJuYW1l::46b',
+  'never', 60 %}"
+name: Follow User
 description: ""
-method: GET
+method: POST
 body: {}
 parameters: []
 headers: []
@@ -14,7 +16,7 @@ authentication:
   type: bearer
   token: "{% response 'body', 'req_1d2c32f0ac2a4c69b5c8daca4cc8d790',
     'b64::JC5kYXRhLnRva2Vu::46b', 'never', 60 %}"
-metaSortKey: -1631423164069
+metaSortKey: -1634863973286
 isPrivate: false
 settingStoreCookies: true
 settingSendCookies: true

@@ -1,9 +1,9 @@
 _id: req_efa0c635b6024e3a992b760f2911e441
 type: Request
 parentId: fld_943d9ffd09cf42f2a49abbbb917c27fa
-modified: 1628423797131
+modified: 1634517944665
 created: 1628420358306
-url: "{{ _.baseUrl }}/tweet"
+url: "{{ _.baseUrl }}/tweet/615492bd6df2611ec88533eb"
 name: Get Tweets
 description: ""
 method: GET
