@@ -69,6 +69,14 @@ const graphLookupTweetReplies = (req, needPagination = false) => [
         },
         ...graphLookupTweetRepliesOnly,
         {
+          $lookup: {
+            from: "users",
+            localField: "user",
+            foreignField: "_id",
+            as: "user",
+          },
+        },
+        {
           $sort: {
             _id: -1,
           },
@@ -77,7 +85,10 @@ const graphLookupTweetReplies = (req, needPagination = false) => [
           ? Pagination.pagination(req?.query?.page, req?.query?.perpage)
           : Pagination.pagination()),
         {
-          $project: tweetDisplayFiltered(req),
+          $project: {
+            ...tweetDisplayFiltered(req),
+            username: { $first: "$user.username" },
+          },
         },
       ].filter((value) => value != null),
       as: "replies",
