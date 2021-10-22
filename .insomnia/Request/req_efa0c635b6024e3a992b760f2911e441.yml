@@ -1,9 +1,11 @@
 _id: req_efa0c635b6024e3a992b760f2911e441
 type: Request
 parentId: fld_943d9ffd09cf42f2a49abbbb917c27fa
-modified: 1634517944665
+modified: 1634904573948
 created: 1628420358306
-url: "{{ _.baseUrl }}/tweet/615492bd6df2611ec88533eb"
+url: "{{ _.baseUrl }}/tweet/{% response 'body',
+  'req_71fedefd5f4e4799ad8413cd01becbd5', 'b64::JC5kYXRhLjAuX2lk::46b', 'never',
+  60 %}"
 name: Get Tweets
 description: ""
 method: GET
