@@ -213,6 +213,7 @@ const timelinePipelines = (req, needPagination = false) => [
   {
     $project: {
       _id: 0,
+      tweets: 1,
   },
 ];
 
