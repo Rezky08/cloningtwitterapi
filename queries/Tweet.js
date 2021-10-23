@@ -159,18 +159,14 @@ const timelinePipelines = (req, needPagination = false) => [
       from: "tweets",
       let: {
         followinguser: {
-          $concatArrays: [
-            "$following",
-            {
-              $cond: {
-                if: {
-                  $eq: [mongoose.Types.ObjectId(req?.user?._id), "$_id"],
-                },
-                then: ["$_id"],
-                else: [],
-              },
+          $cond: {
+            if: {
+              $eq: [mongoose.Types.ObjectId(req?.user?._id), "$_id"],
             },
-          ],
+            then: { $concatArrays: ["$following", ["$_id"]] },
+            else: { $concatArrays: [["$_id"]] },
+            // else: ["$_id"],
+          },
         },
         userid: "$_id",
       },
@@ -203,7 +199,45 @@ const timelinePipelines = (req, needPagination = false) => [
                   },
                 ],
               },
-              { replyTo: null },
+              {
+                $or: [
+                  {
+                    $and: [
+                      {
+                        $expr: {
+                          $not: [
+                            {
+                              $or: [
+                                { $eq: [{ $type: "$replyTo" }, "missing"] },
+                                { $eq: ["$replyTo", null] },
+                              ],
+                            },
+                          ],
+                        },
+                      },
+                      {
+                        $expr: {
+                          $in: ["$$userid", "$likes"],
+                        },
+                      },
+                    ],
+                  },
+                  {
+                    $expr: {
+                      $cond: {
+                        if: {
+                          $or: [
+                            { $eq: [{ $type: "$replyTo" }, "missing"] },
+                            { $eq: ["$replyTo", null] },
+                          ],
+                        },
+                        then: true,
+                        else: false,
+                      },
+                    },
+                  },
+                ],
+              },
             ],
           },
         },
