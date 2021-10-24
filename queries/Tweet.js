@@ -22,6 +22,7 @@ const graphLookupTweetRepliesOnly = [
 const tweetDisplay = (user_id = null) => {
   return {
     $project: {
+      name: 1,
       username: 1,
       text: 1,
       attachments: 1,
@@ -107,11 +108,31 @@ const tweetPipelines = (req) => {
       },
     },
     {
+      $lookup: {
+        from: "userdetails",
+        localField: "user",
+        foreignField: "user",
+        as: "userDetailTweet",
+      },
+    },
+    {
       $unwind: "$userTweet",
     },
     {
       $addFields: {
         username: "$userTweet.username",
+        name: {
+          $cond: {
+            if: {
+              $or: [
+                { $eq: [{ $type: "$userDetailTweet.name" }, "missing"] },
+                { $eq: ["$userDetailTweet.name", null] },
+              ],
+            },
+            then: "$userDetailTweet.name",
+            else: "$userTweet.username",
+          },
+        },
       },
     },
     ...graphLookupTweetReplies(req),

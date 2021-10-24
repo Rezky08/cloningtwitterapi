@@ -9,6 +9,10 @@ const UserDetailSchema = mongoose.Schema({
     required: true,
     index: true,
   },
+  name: {
+    type: String,
+    default: "",
+  },
   description: {
     type: String,
     default: "",
