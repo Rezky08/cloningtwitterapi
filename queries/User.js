@@ -57,6 +57,7 @@ const userAggregate = (req) => [
           else: false,
         },
       },
+      joineddate: "$detail.created_at",
     },
   },
   // { $limit: 1 },
