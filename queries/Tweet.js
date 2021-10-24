@@ -180,7 +180,7 @@ const timelinePipelines = (req, needPagination = false) => [
                   {
                     $expr: {
                       $and: [
-                        { $setIsSubset: ["$likes", "$$followinguser"] },
+                        { $setIsSubset: ["$$followinguser", "$likes"] },
                         {
                           $and: [
                             {
@@ -217,7 +217,7 @@ const timelinePipelines = (req, needPagination = false) => [
                       },
                       {
                         $expr: {
-                          $in: ["$$userid", "$likes"],
+                          $in: ["$$followinguser", "$likes"],
                         },
                       },
                     ],

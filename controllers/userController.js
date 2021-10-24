@@ -23,7 +23,6 @@ const index = (req, res) => {
 const show = (req, res) => {
   User.aggregate([
     { $match: { username: req?.params?.username } },
-    ,
     ...UserQuery.userAggregate(req),
   ])
     .then((user) => {
