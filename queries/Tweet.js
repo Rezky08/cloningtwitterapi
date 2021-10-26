@@ -32,6 +32,7 @@ const tweetDisplay = (user_id = null) => {
       "replyUsers.username": 1,
       replyTo: 1,
       created_at: 1,
+      userFlag: 1,
       flag: {
         liked: { $in: [mongoose.Types.ObjectId(user_id), "$likes"] },
         retweeted: { $in: [mongoose.Types.ObjectId(user_id), "$retweet"] },
@@ -262,6 +263,23 @@ const timelinePipelines = (req, needPagination = false) => [
             ],
           },
         },
+        {
+          $addFields: {
+            userFlag: {
+              $cond: {
+                if: {
+                  $ne: [mongoose.Types.ObjectId(req?.user?._id), "$$userid"],
+                },
+                then: {
+                  liked: { $in: ["$$userid", "$likes"] },
+                  retweeted: { $in: ["$$userid", "$retweet"] },
+                },
+                else: null,
+              },
+            },
+          },
+        },
+
         ...tweetPipelines(req),
         {
           $sort: {
