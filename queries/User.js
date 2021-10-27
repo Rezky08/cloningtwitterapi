@@ -28,6 +28,18 @@ const userAggregate = (req) => [
   {
     $project: {
       username: true,
+      name: {
+        $cond: {
+          if: {
+            $or: [
+              { $eq: [{ $type: "$detail.name" }, "missing"] },
+              { $eq: ["$detail.name", null] },
+            ],
+          },
+          then: "$username",
+          else: "$detail.name",
+        },
+      },
       description: "$detail.description",
       location: "$detail.location",
       link: "$detail.link",
