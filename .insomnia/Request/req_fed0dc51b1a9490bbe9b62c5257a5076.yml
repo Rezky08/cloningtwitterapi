@@ -1,11 +1,9 @@
 _id: req_fed0dc51b1a9490bbe9b62c5257a5076
 type: Request
 parentId: fld_943d9ffd09cf42f2a49abbbb917c27fa
-modified: 1634859147273
+modified: 1635035615050
 created: 1634467676167
-url: "{{ _.baseUrl }}/tweet/like/{% response 'body',
-  'req_39f312d6608249fb9b1f827a5fa83de6', 'b64::JC5kYXRhLjAuX2lk::46b', 'never',
-  60 %}"
+url: "{{ _.baseUrl }}/tweet/like/616f95aa1c92cc3bf8b7c994"
 name: Like Tweet
 description: ""
 method: POST

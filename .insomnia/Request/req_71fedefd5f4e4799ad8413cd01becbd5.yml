@@ -1,7 +1,7 @@
 _id: req_71fedefd5f4e4799ad8413cd01becbd5
 type: Request
 parentId: fld_82b17b25db8a41e7874da5230c4f05c4
-modified: 1634864432005
+modified: 1634993509017
 created: 1634427862728
 url: "{{ _.baseUrl }}/timeline"
 name: Get Self Timeline
@@ -13,11 +13,12 @@ parameters:
     name: page
     value: "2"
     description: ""
+    disabled: true
   - id: pair_76816c4d265b4bfb86c7f3311ec3adb6
     name: perpage
     value: "1"
     description: ""
-    disabled: false
+    disabled: true
 headers: []
 authentication:
   type: bearer
