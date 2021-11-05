@@ -1,9 +1,10 @@
 const Response = require("../responses");
 const User = require("../models/User");
 const mongoose = require("mongoose");
+const UserQuery = require("../queries/User");
 
 const index = (req, res) => {
-  User.find()
+  User.aggregate(UserQuery.userAggregate(req))
     .then((users) => {
       Response.ResponseFormatter.jsonResponse(
         res,
@@ -20,68 +21,10 @@ const index = (req, res) => {
     });
 };
 const show = (req, res) => {
-  const aggregateQuery = [
-    { $match: { username: req.params.username } },
-    {
-      $lookup: {
-        from: "follows",
-        localField: "_id",
-        foreignField: "user",
-        as: "follows",
-      },
-    },
-    {
-      $lookup: {
-        from: "userdetails",
-        localField: "_id",
-        foreignField: "user",
-        as: "detail",
-      },
-    },
-    {
-      $unwind: "$follows",
-    },
-    {
-      $unwind: "$detail",
-    },
-
-    {
-      $project: {
-        username: true,
-        description: "$detail.description",
-        location: "$detail.location",
-        link: "$detail.link",
-        followers: { $size: "$follows.followers" },
-        following: { $size: "$follows.following" },
-        followed: {
-          $cond: {
-            if: {
-              $in: [
-                mongoose.Types.ObjectId(req?.user?._id),
-                "$follows.followers.user",
-              ],
-            },
-            then: true,
-            else: false,
-          },
-        },
-        followedback: {
-          $cond: {
-            if: {
-              $in: [
-                mongoose.Types.ObjectId(req?.user?._id),
-                "$follows.following.user",
-              ],
-            },
-            then: true,
-            else: false,
-          },
-        },
-      },
-    },
-    // { $limit: 1 },
-  ];
-  User.aggregate(aggregateQuery)
+  User.aggregate([
+    { $match: { username: req?.params?.username } },
+    ...UserQuery.userAggregate(req),
+  ])
     .then((user) => {
       Response.ResponseFormatter.jsonResponse(
         res,

@@ -1,30 +1,32 @@
-_id: req_71fedefd5f4e4799ad8413cd01becbd5
+_id: req_135d163839db4a3eadff655f803aca4c
 type: Request
-parentId: fld_82b17b25db8a41e7874da5230c4f05c4
-modified: 1634993509017
-created: 1634427862728
-url: "{{ _.baseUrl }}/timeline"
-name: Get Self Timeline
+parentId: fld_40079929b4eb4edca74e132fa3603047
+modified: 1634864470103
+created: 1634701289189
+url: "{{ _.baseUrl }}/tweet/reply/{% response 'body',
+  'req_71fedefd5f4e4799ad8413cd01becbd5', 'b64::JC5kYXRhLjAuX2lk::46b', 'never',
+  60 %}"
+name: Get Replies of Tweet
 description: ""
 method: GET
 body: {}
 parameters:
-  - id: pair_19152bb78afe4f9e84709b7e693d7ef2
+  - id: pair_f089ee6e128747d19d69cf6dc044a845
     name: page
     value: "2"
     description: ""
-    disabled: true
-  - id: pair_76816c4d265b4bfb86c7f3311ec3adb6
+    disabled: false
+  - id: pair_6ceb5bfbd7914791b52510dd4080196f
     name: perpage
     value: "1"
     description: ""
-    disabled: true
+    disabled: false
 headers: []
 authentication:
   type: bearer
   token: "{% response 'body', 'req_1d2c32f0ac2a4c69b5c8daca4cc8d790',
     'b64::JC5kYXRhLnRva2Vu::46b', 'never', 60 %}"
-metaSortKey: -1634427862728
+metaSortKey: -1634701289189
 isPrivate: false
 settingStoreCookies: true
 settingSendCookies: true

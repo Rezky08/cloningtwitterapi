@@ -27,6 +27,7 @@ const logger = (error, req, res, next) => {
         break;
     }
   }
+  console.log(error);
   ResponseFormatter.errorResponse(error.error, res, code, data);
 };
 

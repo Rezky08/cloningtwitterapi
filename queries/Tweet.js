@@ -22,6 +22,7 @@ const graphLookupTweetRepliesOnly = [
 const tweetDisplay = (user_id = null) => {
   return {
     $project: {
+      name: 1,
       username: 1,
       text: 1,
       attachments: 1,
@@ -31,6 +32,7 @@ const tweetDisplay = (user_id = null) => {
       "replyUsers.username": 1,
       replyTo: 1,
       created_at: 1,
+      userFlag: 1,
       flag: {
         liked: { $in: [mongoose.Types.ObjectId(user_id), "$likes"] },
         retweeted: { $in: [mongoose.Types.ObjectId(user_id), "$retweet"] },
@@ -51,7 +53,7 @@ const tweetDisplayFiltered = (req) => {
   return Object.fromEntries(filtered);
 };
 
-const graphLookupTweetReplies = (req) => [
+const graphLookupTweetReplies = (req, needPagination = false) => [
   ...graphLookupTweetRepliesOnly,
   {
     $lookup: {
@@ -69,15 +71,28 @@ const graphLookupTweetReplies = (req) => [
         },
         ...graphLookupTweetRepliesOnly,
         {
-          $sort: {
-            _id: 1,
+          $lookup: {
+            from: "users",
+            localField: "user",
+            foreignField: "_id",
+            as: "user",
           },
         },
-        ...Pagination.pagination(req?.query?.page, req?.query?.perpage),
         {
-          $project: tweetDisplayFiltered(req),
+          $sort: {
+            _id: -1,
+          },
         },
-      ],
+        ...(needPagination
+          ? Pagination.pagination(req?.query?.page, req?.query?.perpage)
+          : Pagination.pagination()),
+        {
+          $project: {
+            ...tweetDisplayFiltered(req),
+            username: { $first: "$user.username" },
+          },
+        },
+      ].filter((value) => value != null),
       as: "replies",
     },
   },
@@ -94,11 +109,31 @@ const tweetPipelines = (req) => {
       },
     },
     {
+      $lookup: {
+        from: "userdetails",
+        localField: "user",
+        foreignField: "user",
+        as: "userDetailTweet",
+      },
+    },
+    {
       $unwind: "$userTweet",
     },
     {
       $addFields: {
         username: "$userTweet.username",
+        name: {
+          $cond: {
+            if: {
+              $or: [
+                { $eq: [{ $type: "$userDetailTweet.name" }, "missing"] },
+                { $eq: ["$userDetailTweet.name", null] },
+              ],
+            },
+            then: "$userDetailTweet.name",
+            else: "$userTweet.username",
+          },
+        },
       },
     },
     ...graphLookupTweetReplies(req),
@@ -120,7 +155,7 @@ const tweetPipelines = (req) => {
   ];
 };
 
-const timelinePipelines = (req) => [
+const timelinePipelines = (req, needPagination = false) => [
   {
     $lookup: {
       from: "follows",
@@ -136,17 +171,124 @@ const timelinePipelines = (req) => [
     },
   },
   {
-    $unwind: "$following",
+    $unwind: {
+      path: "$following",
+      preserveNullAndEmptyArrays: true,
+    },
   },
   {
     $lookup: {
       from: "tweets",
-      let: { followinguser: { $concatArrays: ["$following", ["$_id"]] } },
+      let: {
+        followinguser: {
+          $cond: {
+            if: {
+              $eq: [mongoose.Types.ObjectId(req?.user?._id), "$_id"],
+            },
+            then: { $concatArrays: ["$following", ["$_id"]] },
+            else: { $concatArrays: [["$_id"]] },
+            // else: ["$_id"],
+          },
+        },
+        userid: "$_id",
+      },
       pipeline: [
         {
-          $match: { $expr: { $in: ["$user", "$$followinguser"] } },
+          $match: {
+            $and: [
+              {
+                $or: [
+                  { $expr: { $in: ["$user", "$$followinguser"] } },
+                  {
+                    $expr: {
+                      $and: [
+                        { $setIsSubset: ["$$followinguser", "$likes"] },
+                        {
+                          $and: [
+                            {
+                              $gt: [{ $size: "$likes" }, 0],
+                            },
+                            {
+                              $gt: [{ $size: "$$followinguser" }, 0],
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                  },
+                  {
+                    $expr: { $eq: ["$$userid", "$user"] },
+                  },
+                ],
+              },
+              {
+                $or: [
+                  {
+                    $and: [
+                      {
+                        $expr: {
+                          $not: [
+                            {
+                              $or: [
+                                { $eq: [{ $type: "$replyTo" }, "missing"] },
+                                { $eq: ["$replyTo", null] },
+                              ],
+                            },
+                          ],
+                        },
+                      },
+                      {
+                        $expr: {
+                          $in: ["$$followinguser", "$likes"],
+                        },
+                      },
+                    ],
+                  },
+                  {
+                    $expr: {
+                      $cond: {
+                        if: {
+                          $or: [
+                            { $eq: [{ $type: "$replyTo" }, "missing"] },
+                            { $eq: ["$replyTo", null] },
+                          ],
+                        },
+                        then: true,
+                        else: false,
+                      },
+                    },
+                  },
+                ],
+              },
+            ],
+          },
         },
+        {
+          $addFields: {
+            userFlag: {
+              $cond: {
+                if: {
+                  $ne: [mongoose.Types.ObjectId(req?.user?._id), "$$userid"],
+                },
+                then: {
+                  liked: { $in: ["$$userid", "$likes"] },
+                  retweeted: { $in: ["$$userid", "$retweet"] },
+                },
+                else: null,
+              },
+            },
+          },
+        },
+
         ...tweetPipelines(req),
+        {
+          $sort: {
+            _id: -1,
+          },
+        },
+        ...(needPagination
+          ? Pagination.pagination(req?.query?.page, req?.query?.perpage)
+          : Pagination.pagination()),
       ],
       as: "tweets",
     },
@@ -155,15 +297,7 @@ const timelinePipelines = (req) => [
   {
     $project: {
       _id: 0,
-      tweets: {
-        $filter: {
-          input: "$tweets",
-          as: "tweet",
-          cond: {
-            $not: [{ $in: ["$$tweet.replyTo", "$tweets._id"] }],
-          },
-        },
-      },
+      tweets: 1,
     },
   },
 ];

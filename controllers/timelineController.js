@@ -7,29 +7,36 @@ const ObjectId = mongoose.Types.ObjectId;
 const TweetQueries = require("../queries/Tweet");
 
 const index = (req, res) => {
-  User.aggregate([
-    {
-      $match: { _id: ObjectId(req?.user?._id) },
-    },
-    ...TweetQueries.timelinePipelines(req),
-  ])
-    .then((tweets) => {
-      tweets = tweets[0]?.tweets;
+  try {
+    User.aggregate([
+      {
+        $match: { _id: ObjectId(req?.user?._id) },
+      },
+      ...TweetQueries.timelinePipelines(
+        req,
+        req?.query?.hasOwnProperty("page")
+      ),
+    ])
+      .then((tweets) => {
+        tweets = tweets[0]?.tweets;
 
-      Response.ResponseFormatter.jsonResponse(
-        res,
-        Response.ResponseCode.RESPONSE_CODE.RC_SUCCESS,
-        tweets
-      );
-    })
-    .catch((err) => {
-      console.log(err);
-      Response.ResponseFormatter.jsonResponse(
-        res,
-        Response.ResponseCode.RESPONSE_CODE.RC_SUCCESS,
-        err
-      );
-    });
+        Response.ResponseFormatter.jsonResponse(
+          res,
+          Response.ResponseCode.RESPONSE_CODE.RC_SUCCESS,
+          tweets
+        );
+      })
+      .catch((err) => {
+        console.log(err);
+        Response.ResponseFormatter.jsonResponse(
+          res,
+          Response.ResponseCode.RESPONSE_CODE.RC_SUCCESS,
+          err
+        );
+      });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const show = async (req, res) => {
@@ -47,7 +54,7 @@ const show = async (req, res) => {
     {
       $match: { _id: user._id },
     },
-    ...TweetQueries.timelinePipelines,
+    ...TweetQueries.timelinePipelines(req, req?.query?.hasOwnProperty("page")),
   ])
     .then((tweets) => {
       tweets = tweets[0]?.tweets;

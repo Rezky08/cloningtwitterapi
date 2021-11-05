@@ -32,7 +32,10 @@ const store = async (req, res) => {
 const show = async (req, res) => {
   Tweet.aggregate([
     { $match: { _id: mongoose.Types.ObjectId(req.params.tweetId) } },
-    ...TweetQueries.graphLookupTweetReplies(req),
+    ...TweetQueries.graphLookupTweetReplies(
+      req,
+      req?.query?.hasOwnProperty("page")
+    ),
   ])
     .then((tweets) => {
       tweet = tweets[0] ?? {};
