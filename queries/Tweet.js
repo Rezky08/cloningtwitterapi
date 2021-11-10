@@ -79,6 +79,30 @@ const graphLookupTweetReplies = (req, needPagination = false) => [
           },
         },
         {
+          $lookup: {
+            from: "userdetails",
+            localField: "user",
+            foreignField: "user",
+            as: "userDetailTweet",
+          },
+        },
+        {
+          $addFields: {
+            name: {
+              $cond: {
+                if: {
+                  $or: [
+                    { $eq: [{ $type: "$userDetailTweet.name" }, "missing"] },
+                    { $eq: ["$userDetailTweet.name", null] },
+                  ],
+                },
+                then: "$userDetailTweet.name",
+                else: "$user.username",
+              },
+            },
+          },
+        },
+        {
           $sort: {
             _id: -1,
           },
@@ -90,6 +114,7 @@ const graphLookupTweetReplies = (req, needPagination = false) => [
           $project: {
             ...tweetDisplayFiltered(req),
             username: { $first: "$user.username" },
+            name: { $first: "$name" },
           },
         },
       ].filter((value) => value != null),
