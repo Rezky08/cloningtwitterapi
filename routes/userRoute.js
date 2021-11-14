@@ -5,6 +5,9 @@ const express = require("express");
 const router = express.Router();
 
 const UserController = require("../controllers/userController");
+const UserProfileRoute = require("./userProfileRoute");
+
+router.use(UserProfileRoute.prefix, UserProfileRoute.router);
 
 /**
  * method   : GET
